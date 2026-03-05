@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Eray GENÇ App</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                fontFamily: { sans: ['Inter', 'sans-serif'], brand: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                extend: { colors: { brand: { primary: '#00DC82', secondary: '#3b82f6', warning: '#f59e0b', info: '#0ea5e9', dark: '#0f172a', surface: '#1e293b', danger: '#ff4757', purple: '#8b5cf6' } } }
+            }
+        }
+    </script>
+    <style>
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        [v-cloak] { display: none; }
+        @keyframes float { 0% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0px, 0px) scale(1); } }
+        .animate-blob { animation: float 10s infinite ease-in-out; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scroll::-webkit-scrollbar-thumb { background: #334155; }
+        .slide-fade-enter-active { transition: all 0.3s ease-out; }
+        .slide-fade-leave-active { transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1); }
+        .slide-fade-enter-from, .slide-fade-leave-to { transform: translateY(-10px); opacity: 0; }
+        @keyframes tickerScroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .ticker-text { display: inline-block; white-space: nowrap; animation: tickerScroll 20s linear infinite; }
+        .ticker-wrapper:hover .ticker-text { animation-play-state: paused; }
+    </style>
+</head>
+<body class="antialiased bg-gray-50 dark:bg-[#020420] text-slate-800 dark:text-slate-200 transition-colors duration-300">
+
+<div id="app" v-cloak class="min-h-screen w-full flex flex-col items-center justify-center p-0 sm:p-4 relative overflow-hidden">
+
+    <div class="absolute top-0 left-0 w-96 h-96 bg-brand-primary/20 rounded-full blur-[100px] animate-blob mix-blend-multiply dark:mix-blend-screen filter opacity-70 pointer-events-none"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-brand-secondary/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen filter opacity-70 pointer-events-none"></div>
+
+    <div class="w-full max-w-md md:max-w-4xl h-screen sm:h-[95vh] bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-3xl border-0 sm:border border-gray-200 dark:border-slate-800 sm:rounded-[2.5rem] shadow-2xl relative z-10 flex flex-col overflow-hidden">
+        
+        <div class="w-full bg-[#0a0f1c] text-brand-primary text-[10px] font-mono py-1.5 flex items-center overflow-hidden ticker-wrapper border-b border-gray-800 flex-shrink-0 relative z-40">
+            <div class="ticker-text font-bold tracking-widest w-full">
+                <span class="mr-8 text-gray-500"><i class="ri-pulse-line align-middle"></i> LIVE EXCHANGE RATES</span>
+                <span class="mr-8 text-white">USD/TRY: <span class="text-emerald-400">{{ exchangeRates.USD.toFixed(2) }} ₺</span> <i class="ri-arrow-up-s-fill text-emerald-500"></i></span>
+                <span class="mr-8 text-white">EUR/TRY: <span class="text-emerald-400">{{ exchangeRates.EUR.toFixed(2) }} ₺</span> <i class="ri-arrow-up-s-fill text-emerald-500"></i></span>
+                <span class="mr-8 text-white">EUR/USD: <span class="text-emerald-400">{{ (exchangeRates.EUR / exchangeRates.USD).toFixed(4) }} $</span></span>
+                <span class="mr-8 text-gray-500">*** MARKET DATA ACTIVE ***</span>
+            </div>
+        </div>
+
+        <div class="px-4 sm:px-6 pt-5 pb-4 flex flex-shrink-0 items-center justify-between border-b border-gray-100 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md z-30 relative">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button v-if="activeTab !== 'home'" @click="activeTab = 'home'" class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-all">
+                    <i class="ri-arrow-left-s-line text-2xl -ml-0.5"></i>
+                </button>
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white shadow-lg shadow-brand-primary/30">
+                            <i class="ri-drop-fill text-xl"></i>
+                        </div>
+                        <span class="font-brand font-extrabold text-lg sm:text-xl tracking-tight text-gray-900 dark:text-white">Eray<span class="text-brand-primary">GENÇ</span></span>
+                    </div>
+                    <span class="text-[9px] sm:text-[10px] font-bold tracking-wider text-gray-400 dark:text-slate-500 uppercase">{{ t('appTitle') }}</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <div :title="ratesLoaded ? 'Kurlar Guncel' : 'Kurlar Yukleniyor'" class="hidden sm:block w-2 h-2 rounded-full" :class="ratesLoaded ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-brand-warning animate-pulse'"></div>
+                <select v-model="currency" @change="changeCurrency" class="bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-xs font-bold py-1.5 px-1 sm:px-2 rounded-lg outline-none cursor-pointer border border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
+                    <option value="USD">$ USD</option><option value="EUR">€ EUR</option><option value="TRY">₺ TRY</option>
+                </select>
+                <select v-model="lang" class="bg-gray-100 dark:bg-slate-800 text-xs font-bold py-1.5 px-1 sm:px-2 rounded-lg outline-none cursor-pointer border border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
+                    <option value="tr">🇹🇷 TR</option><option value="en">🇬🇧 EN</option><option value="pt">🇵🇹 PT</option><option value="de">🇩🇪 DE</option>
+                </select>
+                <button @click="toggleTheme" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-gray-600 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-700 transition-all">
+                    <i :class="isDark ? 'ri-moon-clear-fill' : 'ri-sun-fill'" class="text-lg"></i>
+                </button>
+                <button @click="isSettingsOpen = true" class="w-8 h-8 rounded-lg bg-brand-primary/10 text-brand-primary flex items-center justify-center hover:bg-brand-primary/20 transition-all ml-1">
+                    <i class="ri-settings-3-fill text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <div v-show="isSettingsOpen" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 slide-fade-enter-active">
+            <div class="bg-white dark:bg-[#0f172a] border border-gray-200 dark:border-slate-700 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scroll shadow-2xl relative">
+                
+                <div class="sticky top-0 bg-white/90 dark:bg-[#0f172a]/90 backdrop-blur-md border-b border-gray-100 dark:border-slate-800 p-4 flex justify-between items-center z-10">
+                    <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2"><i class="ri-settings-3-line text-brand-secondary"></i> Merkezi İşletme Ayarları</h2>
+                    <button @click="isSettingsOpen = false" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-500 flex justify-center items-center hover:text-red-500"><i class="ri-close-line text-xl"></i></button>
+                </div>
+
+                <div class="p-5 space-y-5">
+                    <p class="text-xs text-gray-500 -mt-2">Buraya girdiğiniz veriler arka planda tüm hesaplama modüllerine (Tuz, pH, Simülasyon) anında etki eder.</p>
+
+                    <div class="bg-brand-primary/10 dark:bg-brand-primary/5 p-4 rounded-2xl border border-brand-primary/30 flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-brand-primary flex items-center gap-2"><i class="ri-water-percent-line"></i> {{ t('liquidFactor') }}</span>
+                            <span class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">1 g/L Katı = X cc/L Sıvı Tuz</span>
+                        </div>
+                        <input type="number" step="0.1" v-model="liquidFactor" class="w-24 bg-white dark:bg-slate-900 border border-brand-primary/40 rounded-xl px-3 py-2 text-base font-bold text-center text-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-700 p-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-brand-secondary mb-4 flex items-center gap-2"><i class="ri-building-4-line text-lg"></i> {{ t('bizData') }}</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            <div v-for="k in ['machines', 'batches', 'days', 'shifts', 'shiftHours', 'fabricPerBatch']" :key="k">
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1">{{ t(k) }}</label>
+                                <div class="relative">
+                                    <input type="number" v-model="globalInputs[k]" class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-secondary">
+                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ getUnit(k) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-700 p-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-orange-500 mb-4 flex items-center gap-2"><i class="ri-money-euro-circle-line text-lg"></i> {{ t('costs') }}</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            <div v-for="k in ['opSalary', 'opMachines', 'electricKw', 'electricPrice', 'steamTon', 'steamPrice', 'fabricPrice']" :key="k">
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">{{ t(k) }}</label>
+                                <div class="relative">
+                                    <input type="number" v-model="globalInputs[k]" class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-orange-500">
+                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ getUnit(k) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button @click="isSettingsOpen = false" class="w-full py-3 bg-brand-secondary text-white font-bold rounded-xl shadow-lg hover:bg-blue-600 transition-colors">Kaydet ve Kapat</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scroll relative bg-gray-50/50 dark:bg-slate-900/20 pb-32">
+            
+            <div v-show="activeTab === 'home'" class="p-6 h-full flex flex-col items-center justify-center gap-6">
+                <div class="text-center mb-2">
+                    <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white shadow-2xl shadow-brand-primary/40 mb-4 transform rotate-3">
+                        <i class="ri-drop-fill text-5xl transform -rotate-3"></i>
+                    </div>
+                    <h2 class="text-2xl font-brand font-bold text-gray-800 dark:text-white mb-1">{{ t('welcome') }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-slate-400">{{ t('selectModule') }}</p>
+                </div>
+
+                <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button @click="activeTab = 'salt'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-primary/50 text-left flex items-center gap-4 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-flask-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-sm mb-1 group-hover:text-brand-primary">{{ t('saltTitle') }}</h3><p class="text-[10px] text-gray-500">{{ t('saltDesc') }}</p></div>
+                    </button>
+
+                    <button @click="activeTab = 'simulator'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-info/50 text-left flex items-center gap-4 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-brand-info/10 text-brand-info flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-dashboard-3-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-sm mb-1 group-hover:text-brand-info">{{ t('simTitle') }}</h3><p class="text-[10px] text-gray-500">{{ t('simDesc') }}</p></div>
+                    </button>
+
+                    <button @click="activeTab = 'ph_roi'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-secondary/50 text-left flex items-center gap-4 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-brand-secondary/10 text-brand-secondary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-line-chart-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-sm mb-1 group-hover:text-brand-secondary">{{ t('roiTitle') }}</h3><p class="text-[10px] text-gray-500">{{ t('roiDesc') }}</p></div>
+                    </button>
+
+                    <button @click="activeTab = 'salt_roi'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-primary/50 text-left flex items-center gap-4 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-bar-chart-box-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-sm text-gray-800 dark:text-white mb-1 group-hover:text-brand-primary">{{ t('saltRoiTitle') }}</h3><p class="text-[10px] text-gray-500">{{ t('saltRoiDesc') }}</p></div>
+                    </button>
+
+                    <button @click="openReportTab" class="group sm:col-span-2 relative overflow-hidden bg-gradient-to-br from-brand-purple to-indigo-900 rounded-3xl p-5 border border-brand-purple/50 shadow-xl hover:shadow-brand-purple/20 text-left flex items-center gap-4 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-white/20 text-white flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-file-chart-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-sm text-white mb-1">{{ t('reportTitle') }}</h3><p class="text-[10px] text-indigo-200">{{ t('reportDesc') }}</p></div>
+                    </button>
+                </div>
+            </div>
+
+            <div v-show="activeTab === 'salt'" class="p-6 max-w-md mx-auto space-y-4">
+                <div class="flex items-center justify-between bg-brand-primary/10 dark:bg-brand-primary/5 p-4 rounded-2xl border border-brand-primary/30 mb-2 shadow-sm">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-bold text-brand-primary flex items-center gap-2"><i class="ri-water-percent-line"></i> {{ t('liquidFactor') }}</span>
+                        <span class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">1 g/L Katı = X cc/L Sıvı</span>
+                    </div>
+                    <input type="number" step="0.1" v-model="liquidFactor" @input="updateFactor" class="w-24 bg-white dark:bg-slate-900 border border-brand-primary/40 rounded-xl px-3 py-2 text-base font-bold text-center text-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary shadow-sm">
+                </div>
+
+                <div v-for="key in ['ms', 'gl', 'liq', 'd', 'be', 'w']" :key="key" class="relative group transition-all duration-200">
+                    <div class="relative flex items-center bg-white dark:bg-slate-800 border-2 rounded-2xl overflow-hidden shadow-sm" :class="saltActive === key ? 'border-brand-primary shadow-[0_0_20px_rgba(0,220,130,0.15)]' : 'border-gray-100 dark:border-slate-700'">
+                        <div class="pl-4 pr-3 text-gray-400" :class="{'text-brand-primary': saltActive === key}"><i :class="getSaltIcon(key)" class="text-xl"></i></div>
+                        <div class="flex-1 relative py-2.5">
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5" :class="{'text-brand-primary': saltActive === key}">{{ t(key) }}</label>
+                            <input type="number" v-model="saltValues[key]" @input="calcSalt(key)" @focus="saltActive = key" @blur="saltActive = null" placeholder="0.0" class="block w-full bg-transparent border-none p-0 text-xl font-bold text-gray-800 dark:text-white focus:ring-0 focus:outline-none h-8">
+                        </div>
+                        <div class="pr-4 pl-2"><span class="text-xs font-bold px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-900 text-gray-500 min-w-[50px] text-center block">{{ getSaltUnit(key) }}</span></div>
+                    </div>
+                </div>
+                <button @click="resetSalt" class="w-full mt-4 py-4 rounded-2xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-base shadow-xl"><i class="ri-refresh-line"></i> {{ t('clearAll') }}</button>
+            </div>
+
+            <div v-show="activeTab === 'simulator'" class="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-xl border border-brand-info/20">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-brand-info flex items-center gap-2 mb-4"><i class="ri-equalizer-fill text-lg"></i> {{ t('simParams') }}</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div v-for="k in ['kilo', 'akBoyaOran', 'tuzLitresi']" :key="k">
+                            <label class="block text-[10px] font-bold text-gray-500 mb-1">{{ t('sim_'+k) }}</label>
+                            <input type="number" v-model="simInputs[k]" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-info outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 mb-1">{{ t('sim_boya') }}</label>
+                            <input type="number" v-model="simInputs.boya" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-info outline-none">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700">
+                        <h4 class="text-[10px] font-bold uppercase text-gray-400 mb-3">{{ t('otherChems') }} (Litre)</h4>
+                        <div class="grid grid-cols-3 md:grid-cols-5 gap-3">
+                            <div v-for="k in ['soda1', 'soda2', 'alkali', 'bikarbonat', 'kimyasal']" :key="k">
+                                <label class="block text-[9px] text-gray-500 mb-1 truncate" :title="t('sim_'+k)">{{ t('sim_'+k) }}</label>
+                                <input type="number" v-model="simInputs[k]" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-2 py-1.5 text-xs font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-info outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700 grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[9px] text-gray-500 mb-1">{{ t('sim_hafiza1') }} (Offset)</label>
+                            <input type="number" step="0.1" v-model="simInputs.hafiza1" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-2 py-1.5 text-xs font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-info outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] text-gray-500 mb-1">{{ t('sim_altLimit') }} (Örn: 0.95)</label>
+                            <input type="number" step="0.01" v-model="simInputs.altLimit" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-2 py-1.5 text-xs font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-info outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] text-gray-500 mb-1">{{ t('sim_ustLimit') }} (Örn: 1.05)</label>
+                            <input type="number" step="0.01" v-model="simInputs.ustLimit" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-2 py-1.5 text-xs font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-info outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gradient-to-br from-[#0a0f1c] to-slate-900 rounded-3xl p-5 border border-brand-info/40 shadow-2xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-brand-info text-white text-[9px] font-bold px-3 py-1 rounded-bl-xl">Boya Hacimden Düşüldü</div>
+                        <h3 class="text-sm font-bold text-white mb-4"><i class="ri-flask-line text-brand-info align-middle"></i> {{ t('tuzBastan') }}</h3>
+                        
+                        <div class="text-center mb-4">
+                            <p class="text-[10px] text-gray-400">{{ t('expectedGL') }}</p>
+                            <p class="text-4xl font-mono font-bold text-white">{{ formatNumber(simResults.tuzBastan.target, 2) }} <span class="text-sm text-gray-500">g/L</span></p>
+                        </div>
+                        
+                        <div class="flex justify-between items-center bg-black/30 rounded-xl p-3 border border-white/5 mb-4">
+                            <div class="text-center w-1/2 border-r border-white/10">
+                                <p class="text-[9px] text-gray-500 uppercase">{{ t('lowerLimit') }}</p>
+                                <p class="text-sm font-bold text-red-400">{{ formatNumber(simResults.tuzBastan.min, 2) }}</p>
+                            </div>
+                            <div class="text-center w-1/2">
+                                <p class="text-[9px] text-gray-500 uppercase">{{ t('upperLimit') }}</p>
+                                <p class="text-sm font-bold text-emerald-400">{{ formatNumber(simResults.tuzBastan.max, 2) }}</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-brand-info/20 border border-brand-info/30 rounded-xl p-3 text-center">
+                            <p class="text-[10px] text-brand-info/80 font-bold uppercase tracking-wider mb-1"><i class="ri-dashboard-3-line"></i> {{ t('sensorShouldRead') }}</p>
+                            <p class="text-2xl font-bold text-brand-info">{{ formatNumber(simResults.tuzBastan.ms, 1) }} <span class="text-xs">mS/cm</span></p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-[#0a0f1c] to-slate-900 rounded-3xl p-5 border border-brand-primary/40 shadow-2xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-brand-primary text-slate-900 text-[9px] font-bold px-3 py-1 rounded-bl-xl">Boya Hacimde Kaldı (0)</div>
+                        <h3 class="text-sm font-bold text-white mb-4"><i class="ri-paint-fill text-brand-primary align-middle"></i> {{ t('boyaBastan') }}</h3>
+                        
+                        <div class="text-center mb-4">
+                            <p class="text-[10px] text-gray-400">{{ t('expectedGL') }}</p>
+                            <p class="text-4xl font-mono font-bold text-white">{{ formatNumber(simResults.boyaBastan.target, 2) }} <span class="text-sm text-gray-500">g/L</span></p>
+                        </div>
+                        
+                        <div class="flex justify-between items-center bg-black/30 rounded-xl p-3 border border-white/5 mb-4">
+                            <div class="text-center w-1/2 border-r border-white/10">
+                                <p class="text-[9px] text-gray-500 uppercase">{{ t('lowerLimit') }}</p>
+                                <p class="text-sm font-bold text-red-400">{{ formatNumber(simResults.boyaBastan.min, 2) }}</p>
+                            </div>
+                            <div class="text-center w-1/2">
+                                <p class="text-[9px] text-gray-500 uppercase">{{ t('upperLimit') }}</p>
+                                <p class="text-sm font-bold text-emerald-400">{{ formatNumber(simResults.boyaBastan.max, 2) }}</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-brand-primary/10 border border-brand-primary/30 rounded-xl p-3 text-center">
+                            <p class="text-[10px] text-brand-primary/80 font-bold uppercase tracking-wider mb-1"><i class="ri-dashboard-3-line"></i> {{ t('sensorShouldRead') }}</p>
+                            <p class="text-2xl font-bold text-brand-primary">{{ formatNumber(simResults.boyaBastan.ms, 1) }} <span class="text-xs">mS/cm</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-show="activeTab === 'ph_roi'" class="relative">
+                <div class="sticky top-0 z-30 bg-[#0a0f1c] sm:rounded-b-3xl sm:mx-4 p-4 sm:p-5 shadow-2xl border-b border-x border-slate-700/50 mb-6">
+                    <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4">
+                        <button v-for="p in ['daily', 'monthly', 'yearly']" :key="p" @click="phPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="phPeriod === p ? 'bg-brand-primary text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
+                    </div>
+                    <div class="text-center mb-5">
+                        <p class="text-[10px] text-gray-400 font-medium mb-1">pH - {{ t('totalGain') }} ({{ t(phPeriod) }})</p>
+                        <h2 class="text-4xl font-brand font-extrabold text-brand-primary drop-shadow-[0_0_15px_rgba(0,220,130,0.3)]">{{ currSymbol }} {{ formatNumber(phResults.totalSavings) }}</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                        <div class="text-center pb-1 border-b border-brand-danger/30"><span class="text-[9px] font-bold text-brand-danger uppercase tracking-widest">{{ t('manualSys') }}</span></div>
+                        <div class="text-center pb-1 border-b border-brand-primary/30"><span class="text-[9px] font-bold text-brand-primary uppercase tracking-widest">{{ t('sensorSys') }}</span></div>
+
+                        <div class="bg-brand-danger/10 rounded-xl p-2.5 border border-brand-danger/20 flex flex-col justify-center">
+                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-gray-400">{{ t('timeSpent') }}</p><i class="ri-arrow-right-down-line text-brand-danger text-xs"></i></div>
+                            <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-red-200">{{ formatTime(phResults.manualTotalHours) }}</p>
+                        </div>
+                        <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col justify-center">
+                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-gray-300">{{ t('timeSaved') }}</p><i class="ri-arrow-right-up-line text-brand-primary text-xs"></i></div>
+                            <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-brand-primary">{{ formatTime(phResults.timeSavedHours) }}</p>
+                        </div>
+
+                        <div class="bg-brand-danger/10 rounded-xl p-2.5 border border-brand-danger/20 flex flex-col gap-2 justify-center">
+                            <div><p class="text-[9px] text-gray-400">{{ t('lostLabor') }}</p><p class="text-xs font-bold text-red-200">{{ currSymbol }} {{ formatNumber(phResults.manualLaborCost) }}</p></div>
+                            <div><p class="text-[9px] text-gray-400">{{ t('lostEnergy') }}</p><p class="text-xs font-bold text-red-200">{{ currSymbol }} {{ formatNumber(phResults.manualEnergyCost) }}</p></div>
+                        </div>
+                        <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col gap-2 justify-center">
+                            <div><p class="text-[9px] text-gray-300">{{ t('laborSavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.laborSavings) }}</p></div>
+                            <div><p class="text-[9px] text-gray-300">{{ t('energySavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.energySavings) }}</p></div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-[#0d1b2a] to-brand-primary/10 rounded-xl p-3 border border-brand-primary/40 col-span-2 flex items-center justify-between">
+                            <div><p class="text-[9px] font-bold text-white uppercase tracking-wider mb-0.5"><i class="ri-rocket-2-fill text-brand-primary"></i> {{ t('capacityRev') }}</p><p class="text-lg sm:text-xl font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.gainedRevenue) }}</p></div>
+                            <div class="text-right"><p class="text-[10px] font-bold text-white">+{{ formatNumber(phResults.gainedBatches) }} {{ t('extraBatch') }}</p><p class="text-[10px] font-bold text-brand-secondary">+{{ formatNumber(phResults.gainedBatches * globalInputs.fabricPerBatch, 0) }} kg</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-4 pb-8 max-w-2xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm p-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-brand-primary mb-4 flex items-center gap-2"><i class="ri-test-tube-line text-lg"></i> pH {{ t('measTime') }}</h3>
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <div v-for="k in ['measPerBatch', 'manTimeMin', 'senTimeSec', 'successRate']" :key="k">
+                                <label class="block text-[10px] text-gray-500 font-semibold">{{ t(k) }}</label>
+                                <div class="relative mt-1">
+                                    <input type="number" v-model="phLocalInputs[k]" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-primary">
+                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ getUnit(k) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-show="activeTab === 'salt_roi'" class="relative">
+                <div class="sticky top-0 z-30 bg-[#0a0f1c] sm:rounded-b-3xl sm:mx-4 p-4 sm:p-5 shadow-2xl border-b border-x border-slate-700/50 mb-6">
+                    <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4">
+                        <button v-for="p in ['daily', 'monthly', 'yearly']" :key="p" @click="saltRoiPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="saltRoiPeriod === p ? 'bg-brand-primary text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
+                    </div>
+                    <div class="text-center mb-5">
+                        <p class="text-[10px] text-gray-400 font-medium mb-1">İletkenlik/Tuz - {{ t('totalGain') }} ({{ t(saltRoiPeriod) }})</p>
+                        <h2 class="text-4xl font-brand font-extrabold text-brand-primary drop-shadow-[0_0_15px_rgba(0,220,130,0.3)]">{{ currSymbol }} {{ formatNumber(saltRoiResults.totalSavings) }}</h2>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                        <div class="text-center pb-1 border-b border-brand-danger/30"><span class="text-[9px] font-bold text-brand-danger uppercase tracking-widest">{{ t('manualSys') }}</span></div>
+                        <div class="text-center pb-1 border-b border-brand-primary/30"><span class="text-[9px] font-bold text-brand-primary uppercase tracking-widest">{{ t('sensorSys') }}</span></div>
+                        
+                        <div class="bg-brand-danger/10 rounded-xl p-2.5 border border-brand-danger/20 flex flex-col justify-center">
+                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-gray-400">{{ t('timeSpent') }}</p><i class="ri-arrow-right-down-line text-brand-danger text-xs"></i></div>
+                            <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-red-200">{{ formatTime(saltRoiResults.manualTotalHours) }}</p>
+                        </div>
+                        <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col justify-center">
+                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-gray-300">{{ t('timeSaved') }}</p><i class="ri-arrow-right-up-line text-brand-primary text-xs"></i></div>
+                            <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-brand-primary">{{ formatTime(saltRoiResults.timeSavedHours) }}</p>
+                        </div>
+                        
+                        <div class="bg-brand-danger/10 rounded-xl p-2.5 border border-brand-danger/20 flex flex-col gap-2 justify-center">
+                            <div><p class="text-[9px] text-gray-400">{{ t('lostLabor') }}</p><p class="text-xs font-bold text-red-200">{{ currSymbol }} {{ formatNumber(saltRoiResults.manualLaborCost) }}</p></div>
+                            <div><p class="text-[9px] text-gray-400">{{ t('lostEnergy') }}</p><p class="text-xs font-bold text-red-200">{{ currSymbol }} {{ formatNumber(saltRoiResults.manualEnergyCost) }}</p></div>
+                        </div>
+                        <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col gap-2 justify-center">
+                            <div><p class="text-[9px] text-gray-300">{{ t('laborSavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(saltRoiResults.laborSavings) }}</p></div>
+                            <div><p class="text-[9px] text-gray-300">{{ t('energySavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(saltRoiResults.energySavings) }}</p></div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-[#0d1b2a] to-brand-primary/10 rounded-xl p-3 border border-brand-primary/40 col-span-2 flex items-center justify-between">
+                            <div>
+                                <p class="text-[9px] font-bold text-white uppercase tracking-wider mb-0.5"><i class="ri-rocket-2-fill text-brand-primary"></i> {{ t('capacityRev') }}</p>
+                                <p class="text-lg sm:text-xl font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(saltRoiResults.gainedRevenue) }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-white">+{{ formatNumber(saltRoiResults.gainedBatches) }} {{ t('extraBatch') }}</p>
+                                <p class="text-[10px] font-bold text-brand-secondary">+{{ formatNumber(saltRoiResults.gainedBatches * globalInputs.fabricPerBatch, 0) }} kg</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="px-4 pb-8 max-w-2xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm p-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-brand-primary mb-4 flex items-center gap-2"><i class="ri-test-tube-line text-lg"></i> Tuz {{ t('measTime') }}</h3>
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <div v-for="k in ['measPerBatch', 'manTimeMin', 'senTimeSec', 'successRate']" :key="k">
+                                <label class="block text-[10px] text-gray-500 font-semibold">{{ t(k) }}</label>
+                                <div class="relative mt-1">
+                                    <input type="number" v-model="saltLocalInputs[k]" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-primary">
+                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ getUnit(k) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-show="activeTab === 'report'" class="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+                
+                <div class="text-center mb-2">
+                    <h2 class="text-2xl font-brand font-bold text-gray-800 dark:text-white">Örnek Saha Analizi</h2>
+                    <p class="text-xs text-brand-purple uppercase tracking-widest mt-1 font-bold">1 Aylık Gerçek İşletme Verisi (Demo)</p>
+                </div>
+
+                <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4 max-w-md mx-auto">
+                    <button @click="reportTab = 'ph'" class="flex-1 text-[11px] sm:text-xs font-bold py-2 rounded-lg transition-all" :class="reportTab === 'ph' ? 'bg-brand-purple text-white shadow-md' : 'text-gray-400 hover:text-white'">🧪 pH Özet</button>
+                    <button @click="reportTab = 'cond'" class="flex-1 text-[11px] sm:text-xs font-bold py-2 rounded-lg transition-all" :class="reportTab === 'cond' ? 'bg-brand-primary text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">⚡ İletkenlik Özet</button>
+                </div>
+
+                <div v-show="reportTab === 'ph'" class="space-y-6 animate-fade-in">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Toplam İşlem</p>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-white">97</p>
+                        </div>
+                        <div class="bg-red-50 dark:bg-red-900/10 p-4 rounded-2xl shadow-sm border border-red-100 dark:border-red-900/30">
+                            <p class="text-[10px] text-red-600 dark:text-red-400 uppercase font-bold mb-1">Manuel Kayıp</p>
+                            <p class="text-2xl font-bold text-red-600 dark:text-red-400">9s 19dk</p>
+                        </div>
+                        <div class="bg-brand-purple/10 p-4 rounded-2xl shadow-sm border border-brand-purple/30">
+                            <p class="text-[10px] text-brand-purple uppercase font-bold mb-1">Sensör Süresi</p>
+                            <p class="text-2xl font-bold text-brand-purple">2s 57dk</p>
+                        </div>
+                        <div class="bg-emerald-50 dark:bg-emerald-900/10 p-4 rounded-2xl shadow-sm border border-emerald-100 dark:border-emerald-900/30">
+                            <p class="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase font-bold mb-1">Net Tasarruf</p>
+                            <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">6s 21dk</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 text-center">Zaman Dağılımı (pH)</h3>
+                            <div class="relative h-48 w-full"><canvas id="phPieChart"></canvas></div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 text-center">En Yüksek Duruşlar (Dakika)</h3>
+                            <div class="relative h-48 w-full"><canvas id="phBarChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-brand-purple/20 to-blue-900/20 border border-brand-purple/40 rounded-2xl p-4 text-sm text-indigo-200">
+                        <i class="ri-information-line text-brand-purple align-middle mr-1"></i> <strong>Açıklama:</strong> Operatörün manuel pH numunesi almak için harcadığı yürüme, soğutma ve ölçme süreleri sıfırlanmış, sensörün makine dinamiğine uygun okuma süresi (110sn) baz alınmıştır.
+                    </div>
+                </div>
+
+                <div v-show="reportTab === 'cond'" class="space-y-6 animate-fade-in">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Toplam İşlem</p>
+                            <p class="text-2xl font-bold text-gray-800 dark:text-white">45</p>
+                        </div>
+                        <div class="bg-red-50 dark:bg-red-900/10 p-4 rounded-2xl shadow-sm border border-red-100 dark:border-red-900/30">
+                            <p class="text-[10px] text-red-600 dark:text-red-400 uppercase font-bold mb-1">Manuel Kayıp</p>
+                            <p class="text-2xl font-bold text-red-600 dark:text-red-400">4s 18dk</p>
+                        </div>
+                        <div class="bg-brand-primary/10 p-4 rounded-2xl shadow-sm border border-brand-primary/30">
+                            <p class="text-[10px] text-brand-primary uppercase font-bold mb-1">Sensör Süresi</p>
+                            <p class="text-2xl font-bold text-brand-primary">7 Dakika</p>
+                        </div>
+                        <div class="bg-emerald-50 dark:bg-emerald-900/10 p-4 rounded-2xl shadow-sm border border-emerald-100 dark:border-emerald-900/30">
+                            <p class="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase font-bold mb-1">Net Tasarruf</p>
+                            <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">4s 11dk</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-slate-700 max-w-md mx-auto">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 text-center">Zaman Dağılımı (İletkenlik)</h3>
+                        <div class="relative h-56 w-full"><canvas id="condPieChart"></canvas></div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-brand-primary/20 to-emerald-900/20 border border-brand-primary/40 rounded-2xl p-4 text-sm text-emerald-200">
+                        <i class="ri-information-line text-brand-primary align-middle mr-1"></i> <strong>Açıklama:</strong> İletkenlik (Inline) ölçümü banyo içi anlık yapıldığından, her bir işlem için okuma ve onay süresi maksimum 10 saniye olarak hesaplanmıştır.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="absolute bottom-0 left-0 w-full z-50 flex flex-col">
+            <div class="w-full bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-xl border-t border-gray-200 dark:border-slate-800 pt-2 px-1 sm:px-2 pb-2 flex justify-between items-center gap-1 overflow-x-auto custom-scroll">
+                <button @click="activeTab = 'home'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'home' ? 'text-gray-900 dark:text-white' : 'text-gray-400'">
+                    <i class="ri-home-smile-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('home') }}</span>
+                </button>
+                <button @click="activeTab = 'salt'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'salt' ? 'text-brand-primary' : 'text-gray-400'">
+                    <i class="ri-flask-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_calc') }}</span>
+                </button>
+                <button @click="activeTab = 'simulator'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'simulator' ? 'text-brand-info' : 'text-gray-400'">
+                    <i class="ri-dashboard-3-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_sim') }}</span>
+                </button>
+                <button @click="activeTab = 'ph_roi'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'ph_roi' ? 'text-brand-secondary' : 'text-gray-400'">
+                    <i class="ri-line-chart-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_ph') }}</span>
+                </button>
+                <button @click="activeTab = 'salt_roi'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'salt_roi' ? 'text-brand-primary' : 'text-gray-400'">
+                    <i class="ri-bar-chart-box-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_salt') }}</span>
+                </button>
+                <button @click="openReportTab" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'report' ? 'text-brand-purple' : 'text-gray-400'">
+                    <i class="ri-file-chart-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_report') }}</span>
+                </button>
+            </div>
+            
+            <div class="w-full bg-[#0a0f1c] text-gray-500 text-[9px] font-mono py-1.5 flex items-center overflow-hidden ticker-wrapper border-t border-gray-800 pb-safe">
+                <div class="ticker-text font-bold tracking-widest w-full">
+                    <span class="mr-12">⚠️ BU YAZILIMIN TÜM HAKLARI GİZLİDİR VE İZİNSİZ PAYLAŞILAMAZ © 2026 ERAY GENÇ ⚠️</span>
+                    <span class="mr-12">⚠️ STRICTLY CONFIDENTIAL & DO NOT DISTRIBUTE © 2026 ERAY GENÇ ⚠️</span>
+                    <span class="mr-12">⚠️ BU YAZILIMIN TÜM HAKLARI GİZLİDİR VE İZİNSİZ PAYLAŞILAMAZ © 2026 ERAY GENÇ ⚠️</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // ================= STATE & AYARLAR =================
+    const translations = {
+        tr: {
+            appTitle: "Eray Genç App", home: "Ana Ekran", settingsTab: "Ayarlar",
+            nav_calc: "Hesaplayıcı", nav_sim: "Tuz Knt", nav_ph: "pH Kazanç", nav_salt: "Tuz Kazanç", nav_report: "Örnek Rapor",
+            welcome: "Hoş Geldiniz", selectModule: "Lütfen kullanmak istediğiniz modülü seçin.",
+            saltTitle: "İletkenlik Birim Hesaplayıcı", saltDesc: "İletkenlik, Konsantrasyon, Bome ve Sıvı Tuz Çevirici.",
+            simTitle: "Tuz Kontrol Simülatörü", simDesc: "Hacim denge formülü ile gerçek g/L tespiti.",
+            roiTitle: "pH Kazanç Simülatörü", roiDesc: "pH Sensörü için zaman, işçilik ve kapasite analizi.",
+            saltRoiTitle: "İletkenlik (Tuz) Kazanç Simülatörü", saltRoiDesc: "Otomatik tuz dozajı ve ölçümü için kazanç analizi.",
+            reportTitle: "Gerçek Rapor Örneği", reportDesc: "Saha verilerine dayalı demo analiz ekranı.",
+            settingsDesc: "İşletme ve maliyet verilerini tek merkezden yönetin.", settingsInfo: "Buraya girdiğiniz değerler tüm hesaplama modüllerinde ortak kullanılır.",
+            clearAll: "Tümünü Sıfırla", liquidFactor: "Sıvı Tuz Çarpanı",
+            ms: "İletkenlik", gl: "Konsantrasyon", liq: "Sıvı Tuz", d: "Yoğunluk", be: "Bome", w: "Yüzde",
+            
+            simParams: "Reçete ve Hacim Parametreleri", 
+            sim_kilo: "Kumaş (kg)", sim_akBoyaOran: "Flotte Oranı", sim_tuzLitresi: "Sıvı Tuz (Litre)", sim_boya: "Boya (Litre)",
+            otherChems: "Diğer Sıvı Kimyasallar", 
+            sim_soda1: "1. Soda", sim_soda2: "2. Soda", sim_alkali: "Alkali", sim_bikarbonat: "Bikarbonat", sim_kimyasal: "Kimyasal",
+            sim_hafiza1: "Hafıza 1", sim_altLimit: "Alt Limit Çrp.", sim_ustLimit: "Üst Limit Çrp.",
+            tuzBastan: "Tuz Baştan Simülasyonu", boyaBastan: "Boya Baştan Simülasyonu", expectedGL: "Hedeflenen Konsantrasyon",
+            lowerLimit: "Alt Limit", upperLimit: "Üst Limit", sensorShouldRead: "Sensör Okuması Gereken",
+
+            totalGain: "Toplam Ekstra Finansal Kazanç", manualSys: "Manuel Sistem", sensorSys: "Sensörlü (Kazanç)",
+            timeSpent: "Harcanan Süre", timeSaved: "Kazanılan Süre", lostLabor: "Kayıp İşçilik", lostEnergy: "Kayıp Enerji",
+            laborSavings: "İşçilik Tasarrufu", energySavings: "Enerji Tasarrufu", capacityRev: "Kapasite & Ciro", extraBatch: "Parti",
+            bizData: "İşletme Verileri", measTime: "Ölçüm & Süre", costs: "Maliyet Çarpanları",
+            machines: "Makine Sayısı", batches: "İş Emri (Günde)", days: "Aylık Çalışma", measPerBatch: "Ölçüm (İş Emri Başı)",
+            manTimeMin: "Manuel Ölçüm", senTimeSec: "Sensör Ölçüm", successRate: "Adım Atlama",
+            opSalary: "Opr. Toplam Maliyeti", opMachines: "Baktığı Makine", shifts: "Vardiya Sayısı", shiftHours: "Vardiya Saati",
+            electricKw: "Makine Elektrik", electricPrice: "Elektrik Fiyatı", steamTon: "Makine Buhar", steamPrice: "Buhar Fiyatı",
+            fabricPerBatch: "Kumaş/İş Emri", fabricPrice: "Satış Fiyatı",
+            daily: "Günlük", monthly: "Aylık", yearly: "Yıllık",
+            u_pcs: "Adet", u_day: "Gün", u_min: "Dk", u_sec: "Sn", u_hour: "Saat"
+        },
+        en: {
+            appTitle: "Eray Genc App", home: "Home", settingsTab: "Settings",
+            nav_calc: "Calculator", nav_sim: "Salt Ctrl", nav_ph: "pH ROI", nav_salt: "Salt ROI", nav_report: "Demo Report",
+            welcome: "Welcome", selectModule: "Please select a module to start.",
+            saltTitle: "Conductivity Unit Calculator", saltDesc: "Conductivity, Concentration, Baume and Liquid Salt.",
+            simTitle: "Salt Control Simulator", simDesc: "Real g/L detection via mass balance formula.",
+            roiTitle: "pH Profit Simulator", roiDesc: "pH Sensor time, labor, energy analysis.",
+            saltRoiTitle: "Conductivity (Salt) Profit Simulator", saltRoiDesc: "Automated salt dosing and measurement ROI.",
+            reportTitle: "Real Report Example", reportDesc: "Demo analysis screen based on field data.",
+            settingsDesc: "Manage business and cost data from one center.", settingsInfo: "Values entered here are used globally in all modules.",
+            clearAll: "Clear All", liquidFactor: "Liquid Salt Factor",
+            ms: "Conductivity", gl: "Concentration", liq: "Liquid Salt", d: "Density", be: "Baume", w: "Percentage",
+            
+            simParams: "Recipe and Volume Parameters", 
+            sim_kilo: "Fabric (kg)", sim_akBoyaOran: "Liquor Ratio", sim_tuzLitresi: "Liquid Salt (Liters)", sim_boya: "Dye (Liters)",
+            otherChems: "Other Liquid Chemicals", 
+            sim_soda1: "1st Soda", sim_soda2: "2nd Soda", sim_alkali: "Alkali", sim_bikarbonat: "Bicarbonate", sim_kimyasal: "Chemical",
+            sim_hafiza1: "Memory 1", sim_altLimit: "Lower Mul.", sim_ustLimit: "Upper Mul.",
+            tuzBastan: "Salt First Sim.", boyaBastan: "Dye First Sim.", expectedGL: "Expected Concentration",
+            lowerLimit: "Lower Limit", upperLimit: "Upper Limit", sensorShouldRead: "Sensor Should Read",
+
+            totalGain: "Total Extra Gain", manualSys: "Manual System", sensorSys: "Sensor (Gain)",
+            timeSpent: "Time Spent", timeSaved: "Time Saved", lostLabor: "Lost Labor", lostEnergy: "Lost Energy",
+            laborSavings: "Labor Savings", energySavings: "Energy Savings", capacityRev: "Capacity & Revenue", extraBatch: "Batches",
+            bizData: "Business Data", measTime: "Measurement & Time", costs: "Cost Multipliers",
+            machines: "Machine Count", batches: "Batches (Daily)", days: "Work Days", measPerBatch: "Meas. per Batch",
+            manTimeMin: "Manual Time", senTimeSec: "Sensor Time", successRate: "Success Rate",
+            opSalary: "Operator Cost", opMachines: "Machines per Op.", shifts: "Shifts", shiftHours: "Shift Hours",
+            electricKw: "Mach. Electric", electricPrice: "Electric Price", steamTon: "Mach. Steam", steamPrice: "Steam Price",
+            fabricPerBatch: "Fabric / Batch", fabricPrice: "Sale Price",
+            daily: "Daily", monthly: "Monthly", yearly: "Yearly",
+            u_pcs: "Pcs", u_day: "Day", u_min: "Min", u_sec: "Sec", u_hour: "Hour"
+        },
+        pt: {
+            appTitle: "Eray Genc App", home: "Início", settingsTab: "Config",
+            nav_calc: "Calculadora", nav_sim: "Ctrl Sal", nav_ph: "ROI pH", nav_salt: "ROI Sal", nav_report: "Relatório",
+            welcome: "Bem-vindo", selectModule: "Selecione um módulo.",
+            saltTitle: "Calculadora de Condutividade", saltDesc: "Condutividade, Concentração, Baumé e Sal Líquido.",
+            simTitle: "Simulador Controle de Sal", simDesc: "Detecção real de g/L via fórmula de saldo.",
+            roiTitle: "Simulador de Lucro pH", roiDesc: "Análise de tempo, trabalho, energia e capacidade.",
+            saltRoiTitle: "Simulador de Lucro Condutividade", saltRoiDesc: "ROI de medição e dosagem automática de sal.",
+            reportTitle: "Exemplo de Relatório", reportDesc: "Tela de análise baseada em dados reais.",
+            settingsDesc: "Gerenciar dados de negócios e custos.", settingsInfo: "Valores usados globalmente.",
+            clearAll: "Limpar Tudo", liquidFactor: "Fator Sal Líquido",
+            ms: "Condutividade", gl: "Concentração", liq: "Sal Líquido", d: "Densidade", be: "Baumé", w: "Porcentagem",
+            simParams: "Parâmetros de Receita", sim_kilo: "Tecido (kg)", sim_akBoyaOran: "Relação Banho", sim_tuzLitresi: "Sal Líquido (L)", sim_boya: "Corante (L)", otherChems: "Químicos", sim_soda1: "Soda 1", sim_soda2: "Soda 2", sim_alkali: "Álcali", sim_bikarbonat: "Bicarbonato", sim_kimyasal: "Químico", sim_hafiza1: "Memória 1", sim_altLimit: "Lim. Inf", sim_ustLimit: "Lim. Sup", tuzBastan: "Sal Primeiro", boyaBastan: "Corante Primeiro", expectedGL: "Concentração Alvo", lowerLimit: "Limite Inf.", upperLimit: "Limite Sup.", sensorShouldRead: "Sensor deve ler",
+            totalGain: "Ganho Extra Total", manualSys: "Sistema Manual", sensorSys: "Sensor (Ganho)",
+            timeSpent: "Tempo Gasto", timeSaved: "Tempo Economizado", lostLabor: "Trabalho Perdido", lostEnergy: "Energia Perdida",
+            laborSavings: "Econ. Trabalho", energySavings: "Econ. Energia", capacityRev: "Capacidade & Receita", extraBatch: "Lotes",
+            bizData: "Dados Empresa", measTime: "Medição", costs: "Custos",
+            machines: "Máquinas", batches: "Lotes (Diário)", days: "Dias Úteis", measPerBatch: "Medição p/ Lote",
+            manTimeMin: "Tempo Manual", senTimeSec: "Tempo Sensor", successRate: "Taxa Sucesso",
+            opSalary: "Custo Operador", opMachines: "Máqs/Op.", shifts: "Turnos", shiftHours: "Horas/Turno",
+            electricKw: "Eletricidade Máq", electricPrice: "Preço Elétrico", steamTon: "Vapor Máq", steamPrice: "Preço Vapor",
+            fabricPerBatch: "Tecido p/ Lote", fabricPrice: "Preço Venda",
+            daily: "Diário", monthly: "Mensal", yearly: "Anual",
+            u_pcs: "Unid", u_day: "Dia", u_min: "Min", u_sec: "Seg", u_hour: "Hora"
+        },
+        de: {
+            appTitle: "Eray Genc App", home: "Start", settingsTab: "Einst.",
+            nav_calc: "Rechner", nav_sim: "Salz Ctrl", nav_ph: "pH ROI", nav_salt: "Salz ROI", nav_report: "Bericht",
+            welcome: "Willkommen", selectModule: "Bitte wählen Sie ein Modul.",
+            saltTitle: "Leitfähigkeitsrechner", saltDesc: "Leitfähigkeit, Konzentration, Baumé und Flüssigsalz.",
+            simTitle: "Salzkontrollsimulator", simDesc: "Echte g/L Erkennung über Massenbilanz.",
+            roiTitle: "pH Gewinn Simulator", roiDesc: "Zeit-, Arbeits-, Energie- und Kapazitätsanalyse.",
+            saltRoiTitle: "Leitfähigkeit (Salz) Gewinn Simulator", saltRoiDesc: "ROI für automatische Salzdosierung.",
+            reportTitle: "Reales Berichtsmuster", reportDesc: "Demo-Analyse-Bildschirm basierend auf Felddaten.",
+            settingsDesc: "Betriebs- und Kostendaten zentral verwalten.", settingsInfo: "Werte werden global verwendet.",
+            clearAll: "Alles löschen", liquidFactor: "Flüssigsalz-Faktor",
+            ms: "Leitfähigkeit", gl: "Konzentration", liq: "Flüssigsalz", d: "Dichte", be: "Baumé", w: "Prozentsatz",
+            simParams: "Rezeptparameter", sim_kilo: "Stoff (kg)", sim_akBoyaOran: "Flottenverhältnis", sim_tuzLitresi: "Flüssigsalz (L)", sim_boya: "Farbe (L)", otherChems: "Chemikalien", sim_soda1: "Soda 1", sim_soda2: "Soda 2", sim_alkali: "Alkali", sim_bikarbonat: "Bikarbonat", sim_kimyasal: "Chemikalie", sim_hafiza1: "Speicher 1", sim_altLimit: "Untere Gr.", sim_ustLimit: "Obere Gr.", tuzBastan: "Salz Zuerst", boyaBastan: "Farbe Zuerst", expectedGL: "Zielkonzentration", lowerLimit: "Untere Grenze", upperLimit: "Obere Grenze", sensorShouldRead: "Sensor sollte lesen",
+            totalGain: "Zusätzlicher Gewinn", manualSys: "Manuelles System", sensorSys: "Sensor (Gewinn)",
+            timeSpent: "Verbrachte Zeit", timeSaved: "Ersparte Zeit", lostLabor: "Verlorene Arbeit", lostEnergy: "Verlorene Energie",
+            laborSavings: "Arbeitsersparnis", energySavings: "Energieersparnis", capacityRev: "Kapazität & Umsatz", extraBatch: "Chargen",
+            bizData: "Betriebsdaten", measTime: "Messung & Zeit", costs: "Kostenfaktoren",
+            machines: "Maschinen", batches: "Chargen (tägl)", days: "Arbeitstage", measPerBatch: "Mess. pro Charge",
+            manTimeMin: "Manuelle Zeit", senTimeSec: "Sensorzeit", successRate: "Erfolgsrate",
+            opSalary: "Bedienerkosten", opMachines: "Maschinen/Bed.", shifts: "Schichten", shiftHours: "Schichtstunden",
+            electricKw: "Strom Maschine", electricPrice: "Strompreis", steamTon: "Dampf Maschine", steamPrice: "Dampfpreis",
+            fabricPerBatch: "Stoff/Charge", fabricPrice: "Verkaufspreis",
+            daily: "Täglich", monthly: "Monatlich", yearly: "Jährlich",
+            u_pcs: "Stk", u_day: "Tag", u_min: "Min", u_sec: "Sek", u_hour: "Std"
+        }
+    };
+
+    const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue;
+
+    createApp({
+        setup() {
+            // VARSAYILAN DARK MODE: true
+            const isDark = ref(true); 
+            const activeTab = ref('home');
+            const isSettingsOpen = ref(false); 
+            const lang = ref('tr');
+            const t = (key) => translations[lang.value]?.[key] || translations['en']?.[key] || translations['tr'][key] || key;
+            const pageTitle = computed(() => t('appTitle'));
+
+            const currency = ref('USD'); 
+            const prevCurrency = ref('USD');
+            const ratesLoaded = ref(false);
+            const exchangeRates = reactive({ TRY: 1, EUR: 52.0, USD: 44.0 });
+
+            const currSymbol = computed(() => {
+                if(currency.value === 'TRY') return '₺';
+                if(currency.value === 'USD') return '$';
+                return '€';
+            });
+
+            const getUnit = (k) => {
+                const s = currSymbol.value;
+                const u = {
+                    machines: t('u_pcs'), batches: t('u_pcs'), days: t('u_day'), measPerBatch: t('u_pcs'), manTimeMin: t('u_min'), senTimeSec: t('u_sec'), successRate: '%',
+                    opSalary: s + '/' + t('monthly').slice(0,2), opMachines: t('u_pcs'), shifts: t('u_pcs'), shiftHours: t('u_hour'), 
+                    electricKw: 'kW/h', electricPrice: s + '/kWh', steamTon: 'Ton/h', steamPrice: s + '/Ton',
+                    fabricPerBatch: 'kg', fabricPrice: s + '/kg'
+                };
+                return u[k] || '';
+            };
+
+            const fetchRates = async () => {
+                try {
+                    const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                    const data = await res.json();
+                    if(data && data.rates && data.rates.TRY) {
+                        exchangeRates.USD = data.rates.TRY;
+                        exchangeRates.EUR = data.rates.TRY / data.rates.EUR; 
+                        ratesLoaded.value = true;
+                    }
+                } catch (e) { console.log("Canlı kur çekilemedi."); }
+            };
+
+            const changeCurrency = () => {
+                const multiplier = (exchangeRates[prevCurrency.value] || 1) / (exchangeRates[currency.value] || 1);
+                globalInputs.opSalary = parseFloat((globalInputs.opSalary * multiplier).toFixed(2));
+                globalInputs.electricPrice = parseFloat((globalInputs.electricPrice * multiplier).toFixed(4));
+                globalInputs.steamPrice = parseFloat((globalInputs.steamPrice * multiplier).toFixed(2));
+                globalInputs.fabricPrice = parseFloat((globalInputs.fabricPrice * multiplier).toFixed(2));
+                prevCurrency.value = currency.value;
+            };
+
+            const formatTime = (totalHours) => {
+                if(!totalHours || isNaN(totalHours)) return "00:00:00";
+                const h = Math.floor(totalHours);
+                const m = Math.floor((totalHours - h) * 60);
+                const s = Math.round(((totalHours - h) * 60 - m) * 60);
+                let finalS = s, finalM = m, finalH = h;
+                if (finalS === 60) { finalS = 0; finalM++; }
+                if (finalM === 60) { finalM = 0; finalH++; }
+                return `${String(finalH).padStart(2, '0')}:${String(finalM).padStart(2, '0')}:${String(finalS).padStart(2, '0')}`;
+            };
+
+            const formatNumber = (num, decimals = 2) => {
+                if(!num || isNaN(num)) return "0.00";
+                return Number(num).toLocaleString('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+            };
+
+            // ================= AYARLAR =================
+            const globalInputs = reactive({
+                machines: 10, batches: 3, days: 26, shifts: 3, shiftHours: 8, fabricPerBatch: 750,
+                opSalary: 2200, opMachines: 3, electricKw: 30, electricPrice: 0.10, steamTon: 0.5, steamPrice: 25, fabricPrice: 10
+            });
+
+            // ================= İLETKENLİK BİRİM HESAPLAYICI =================
+            const fullSaltData = [{"w":1.0,"d":1.004,"gl":10.04,"ms":17.60,"be":0.60},{"w":2.0,"d":1.011,"gl":20.22,"ms":33.10,"be":1.60},{"w":3.0,"d":1.018,"gl":30.54,"ms":48.60,"be":2.60},{"w":4.0,"d":1.025,"gl":41.01,"ms":63.45,"be":3.60},{"w":5.0,"d":1.032,"gl":51.61,"ms":78.30,"be":4.55},{"w":6.0,"d":1.039,"gl":62.37,"ms":91.27,"be":5.50},{"w":7.0,"d":1.047,"gl":73.27,"ms":104.24,"be":6.45},{"w":8.0,"d":1.054,"gl":84.31,"ms":117.20,"be":7.40},{"w":9.0,"d":1.061,"gl":95.51,"ms":130.20,"be":8.32},{"w":10.0,"d":1.069,"gl":106.86,"ms":143.20,"be":9.25},{"w":11.0,"d":1.076,"gl":118.37,"ms":154.15,"be":10.18},{"w":12.0,"d":1.084,"gl":130.03,"ms":165.10,"be":11.10},{"w":13.0,"d":1.091,"gl":141.84,"ms":174.97,"be":12.00},{"w":14.0,"d":1.099,"gl":153.82,"ms":184.83,"be":12.90},{"w":15.0,"d":1.106,"gl":165.96,"ms":194.70,"be":13.80},{"w":16.0,"d":1.114,"gl":178.25,"ms":202.60,"be":14.70},{"w":17.0,"d":1.122,"gl":190.71,"ms":210.50,"be":15.60},{"w":18.0,"d":1.130,"gl":203.34,"ms":217.27,"be":16.50},{"w":19.0,"d":1.138,"gl":216.14,"ms":224.03,"be":17.40},{"w":20.0,"d":1.145,"gl":229.10,"ms":230.80,"be":18.30},{"w":21.0,"d":1.153,"gl":242.23,"ms":235.80,"be":19.15},{"w":22.0,"d":1.162,"gl":255.54,"ms":240.80,"be":20.00},{"w":23.0,"d":1.170,"gl":269.02,"ms":245.80,"be":20.85},{"w":24.0,"d":1.178,"gl":282.67,"ms":250.80,"be":21.70},{"w":25.0,"d":1.186,"gl":296.50,"ms":253.70,"be":22.60},{"w":26.0,"d":1.194,"gl":310.51,"ms":256.50,"be":23.40}];
+            
+            const interpolateValue = (val, fromKey, toKey) => {
+                if(isNaN(val)) return 0;
+                let r1, r2, frac = 0;
+                if(val <= fullSaltData[0][fromKey]) { r1 = r2 = fullSaltData[0]; }
+                else if(val >= fullSaltData[fullSaltData.length-1][fromKey]) { r1 = r2 = fullSaltData[fullSaltData.length-1]; }
+                else {
+                    let i = 0;
+                    while(i < fullSaltData.length - 1) {
+                        if(val >= fullSaltData[i][fromKey] && val <= fullSaltData[i+1][fromKey]) break;
+                        i++;
+                    }
+                    r1 = fullSaltData[i]; r2 = fullSaltData[i+1];
+                    const range = r2[fromKey] - r1[fromKey];
+                    frac = (range === 0) ? 0 : (val - r1[fromKey]) / range;
+                }
+                return r1[toKey] + frac * (r2[toKey] - r1[toKey]);
+            };
+
+            const saltActive = ref(null);
+            const liquidFactor = ref(3.0);
+            const saltValues = reactive({ ms: '', gl: '', liq: '', d: '', be: '', w: '' });
+            const getSaltIcon = (k) => ({ ms: 'ri-flashlight-fill', gl: 'ri-flask-fill', liq: 'ri-water-flash-fill', d: 'ri-drop-fill', be: 'ri-temp-hot-line', w: 'ri-percent-line' }[k]);
+            const getSaltUnit = (k) => ({ ms: 'mS/cm', gl: 'g/L', liq: 'cc/L', d: 'kg/L', be: 'Be°', w: '%' }[k]);
+
+            let isCalcSalt = false;
+            const calcSalt = (key) => {
+                if(isCalcSalt) return;
+                isCalcSalt = true;
+                const val = parseFloat(saltValues[key]);
+                if(isNaN(val)) { isCalcSalt = false; return; }
+                
+                let searchKey = key === 'liq' ? 'gl' : key;
+                let searchVal = key === 'liq' ? val / liquidFactor.value : val;
+
+                if(key !== 'ms') saltValues.ms = interpolateValue(searchVal, searchKey, 'ms').toFixed(1);
+                if(key !== 'gl' && key !== 'liq') saltValues.gl = interpolateValue(searchVal, searchKey, 'gl').toFixed(1);
+                if(key !== 'd')  saltValues.d  = interpolateValue(searchVal, searchKey, 'd').toFixed(3);
+                if(key !== 'be') saltValues.be = interpolateValue(searchVal, searchKey, 'be').toFixed(2);
+                if(key !== 'w')  saltValues.w  = interpolateValue(searchVal, searchKey, 'w').toFixed(1);
+                
+                if(key !== 'liq') {
+                    const currentGL = key === 'gl' ? val : interpolateValue(searchVal, searchKey, 'gl');
+                    saltValues.liq = (currentGL * liquidFactor.value).toFixed(1);
+                }
+                isCalcSalt = false;
+            };
+            const updateFactor = () => { if (saltValues.gl) calcSalt('gl'); };
+            const resetSalt = () => { Object.keys(saltValues).forEach(k => saltValues[k] = ''); saltActive.value = null; };
+
+            // ================= TUZ KONTROL SİMÜLATÖRÜ =================
+            const simInputs = reactive({
+                kilo: 750, akBoyaOran: 7, tuzLitresi: 300, boya: 0,
+                soda1: 0, soda2: 0, alkali: 0, bikarbonat: 0, kimyasal: 0,
+                hafiza1: 0, altLimit: 0.95, ustLimit: 1.05
+            });
+
+            const simResults = computed(() => {
+                const i = simInputs;
+                const factor = parseFloat(liquidFactor.value) || 3;
+                
+                const totalFlotte = i.kilo * i.akBoyaOran;
+                const chemVolume = Number(i.soda1) + Number(i.soda2) + Number(i.alkali) + Number(i.bikarbonat) + Number(i.kimyasal);
+                
+                const netFlotteTuz = totalFlotte - Number(i.boya) - chemVolume;
+                const netFlotteBoya = totalFlotte - chemVolume;
+
+                let baseTuz = 0; let baseBoya = 0;
+                if (netFlotteTuz > 0) baseTuz = ((i.tuzLitresi * 1000) / (factor * netFlotteTuz)) - i.hafiza1;
+                if (netFlotteBoya > 0) baseBoya = ((i.tuzLitresi * 1000) / (factor * netFlotteBoya)) - i.hafiza1;
+
+                baseTuz = Math.max(0, baseTuz);
+                baseBoya = Math.max(0, baseBoya);
+
+                return {
+                    tuzBastan: { target: baseTuz, min: baseTuz * i.altLimit, max: baseTuz * i.ustLimit, ms: interpolateValue(baseTuz, 'gl', 'ms') },
+                    boyaBastan: { target: baseBoya, min: baseBoya * i.altLimit, max: baseBoya * i.ustLimit, ms: interpolateValue(baseBoya, 'gl', 'ms') }
+                };
+            });
+
+            // ================= ORTAK KAZANÇ (ROI) HESAPLAMA =================
+            const calcRoi = (localInputs) => {
+                const i = { ...globalInputs, ...localInputs };
+
+                const measPerDay = i.machines * i.batches * i.measPerBatch;
+                const manualTotalHoursDay = (measPerDay * i.manTimeMin) / 60;
+                const timeDiffMin = (i.manTimeMin - (i.senTimeSec / 60)) * (i.successRate / 100); 
+                const savedHoursDay = (measPerDay * timeDiffMin) / 60;
+
+                const opHourlyWage = (30 * i.shiftHours) > 0 ? i.opSalary / (30 * i.shiftHours) : 0;
+                const laborCostPerHourPerMachine = i.opMachines > 0 ? opHourlyWage / i.opMachines : 0;
+                const totalEnergyCostPerHour = (i.electricKw * i.electricPrice) + (i.steamTon * i.steamPrice);
+                const hoursPerBatch = i.batches > 0 ? (i.shifts * i.shiftHours) / i.batches : 8;
+
+                const buildRes = (saved, manual) => {
+                    return {
+                        manualTotalHours: manual, manualLaborCost: manual * laborCostPerHourPerMachine, manualEnergyCost: manual * totalEnergyCostPerHour,
+                        timeSavedHours: saved, laborSavings: saved * laborCostPerHourPerMachine, energySavings: saved * totalEnergyCostPerHour,
+                        gainedBatches: saved / hoursPerBatch, gainedRevenue: (saved / hoursPerBatch) * i.fabricPerBatch * i.fabricPrice,
+                        totalSavings: (saved * laborCostPerHourPerMachine) + (saved * totalEnergyCostPerHour) + ((saved / hoursPerBatch) * i.fabricPerBatch * i.fabricPrice)
+                    };
+                };
+
+                return {
+                    'daily': buildRes(savedHoursDay, manualTotalHoursDay),
+                    'monthly': buildRes(savedHoursDay * i.days, manualTotalHoursDay * i.days),
+                    'yearly': buildRes(savedHoursDay * i.days * 12, manualTotalHoursDay * i.days * 12)
+                };
+            };
+
+            // PH KAZANÇ MODÜLÜ
+            const phPeriod = ref('monthly');
+            const phLocalInputs = reactive({ measPerBatch: 6, manTimeMin: 4, senTimeSec: 40, successRate: 100 });
+            const phResults = computed(() => calcRoi(phLocalInputs)[phPeriod.value]);
+
+            // TUZ KAZANÇ MODÜLÜ
+            const saltRoiPeriod = ref('monthly');
+            const saltLocalInputs = reactive({ measPerBatch: 3, manTimeMin: 5, senTimeSec: 30, successRate: 100 });
+            const saltRoiResults = computed(() => calcRoi(saltLocalInputs)[saltRoiPeriod.value]);
+
+            // ================= ÖRNEK RAPOR MODÜLÜ (CHART.JS) =================
+            const reportTab = ref('ph');
+            let phPieChartInstance = null;
+            let phBarChartInstance = null;
+            let condPieChartInstance = null;
+
+            const renderCharts = () => {
+                // PH PIE CHART
+                const ctxPhPie = document.getElementById('phPieChart');
+                if(ctxPhPie && !phPieChartInstance) {
+                    phPieChartInstance = new Chart(ctxPhPie, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Manuel (9s 19dk)', 'Kazanılan (6s 21dk)'],
+                            datasets: [{
+                                data: [100], backgroundColor: ['#ef4444'], borderWidth: 0, weight: 1
+                            }, {
+                                data: [68, 32], backgroundColor: ['#22c55e', 'transparent'], borderWidth: 0, weight: 0.7
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
+                    });
+                }
+
+                // PH BAR CHART
+                const ctxPhBar = document.getElementById('phBarChart');
+                if(ctxPhBar && !phBarChartInstance) {
+                    phBarChartInstance = new Chart(ctxPhBar, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Kayıt 1', 'Kayıt 2', 'Kayıt 3', 'Kayıt 4', 'Kayıt 5'],
+                            datasets: [{ label: 'Bekleme (Dk)', data: [66, 40, 35, 34, 29], backgroundColor: '#8b5cf6', borderRadius: 4 }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } } }
+                    });
+                }
+
+                // COND PIE CHART
+                const ctxCondPie = document.getElementById('condPieChart');
+                if(ctxCondPie && !condPieChartInstance) {
+                    condPieChartInstance = new Chart(ctxCondPie, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Manuel (4s 18dk)', 'Kazanılan (4s 11dk)'],
+                            datasets: [{
+                                data: [100], backgroundColor: ['#ef4444'], borderWidth: 0, weight: 1
+                            }, {
+                                data: [97, 3], backgroundColor: ['#3b82f6', 'transparent'], borderWidth: 0, weight: 0.7
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
+                    });
+                }
+            };
+
+            const openReportTab = () => {
+                activeTab.value = 'report';
+                // DOM'un render edilmesini bekleyip grafikleri çiz
+                nextTick(() => { renderCharts(); });
+            };
+
+            // THEME
+            const toggleTheme = () => {
+                isDark.value = !isDark.value;
+                if(isDark.value) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+            };
+
+            onMounted(() => {
+                fetchRates(); 
+                const saved = localStorage.getItem('theme');
+                if (saved === 'light') {
+                    isDark.value = false;
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.add('dark');
+                }
+            });
+
+            return {
+                isDark, toggleTheme, activeTab, isSettingsOpen, pageTitle, lang, t, getUnit, currency, changeCurrency, currSymbol, exchangeRates, ratesLoaded,
+                liquidFactor, updateFactor, saltValues, getSaltIcon, getSaltUnit, saltActive, calcSalt, resetSalt,
+                globalInputs, simInputs, simResults, 
+                phLocalInputs, phPeriod, phResults,
+                saltLocalInputs, saltRoiPeriod, saltRoiResults,
+                reportTab, openReportTab,
+                formatNumber, formatTime
+            };
+        }
+    }).mount('#app');
+</script>
+
+</body>
+</html>
