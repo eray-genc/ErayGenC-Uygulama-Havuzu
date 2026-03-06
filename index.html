@@ -35,33 +35,55 @@
         .slide-fade-leave-active { transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1); }
         .slide-fade-enter-from, .slide-fade-leave-to { transform: translateY(-10px); opacity: 0; }
         
-        @keyframes tickerScroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .ticker-text { display: inline-block; white-space: nowrap; animation: tickerScroll 25s linear infinite; }
-        .ticker-wrapper:hover .ticker-text { animation-play-state: paused; }
+        /* Kesintisiz Ticker Animasyonu */
+        @keyframes seamlessMarquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .marquee-wrapper {
+            display: flex;
+            width: max-content;
+            animation: seamlessMarquee linear infinite;
+        }
+        .marquee-wrapper > div {
+            display: flex;
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding-right: 2rem;
+        }
+        .ticker-container:hover .marquee-wrapper { animation-play-state: paused; }
         
-        @keyframes flashScroll { 0% { transform: translateX(100vw); } 100% { transform: translateX(-180%); } }
-        .flash-text { display: inline-block; white-space: nowrap; padding-left: 20px; animation: flashScroll 45s linear infinite; }
-        .flash-wrapper:hover .flash-text { animation-play-state: paused; }
+        .speed-normal { animation-duration: 35s; }
+        .speed-slow { animation-duration: 45s; }
 
         .eliar-logo-text { font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: -0.06em; }
     </style>
 </head>
 <body class="antialiased bg-gray-50 dark:bg-[#020420] text-slate-800 dark:text-slate-200 transition-colors duration-300">
 
-<div id="app" v-cloak class="min-h-screen w-full flex flex-col items-center justify-center p-0 sm:p-4 relative overflow-hidden">
+<div id="app" v-cloak class="min-h-screen w-full flex flex-col relative overflow-hidden">
 
     <div class="absolute top-0 left-0 w-96 h-96 bg-brand-primary/20 rounded-full blur-[100px] animate-blob mix-blend-multiply dark:mix-blend-screen filter opacity-70 pointer-events-none"></div>
     <div class="absolute bottom-0 right-0 w-96 h-96 bg-brand-secondary/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen filter opacity-70 pointer-events-none"></div>
 
-    <div class="w-full max-w-md md:max-w-4xl h-screen sm:h-[95vh] bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-3xl border-0 sm:border border-gray-200 dark:border-slate-800 sm:rounded-[2.5rem] shadow-2xl relative z-10 flex flex-col overflow-hidden">
+    <div class="w-full max-w-md md:max-w-4xl mx-auto h-screen sm:h-[95vh] sm:my-auto bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-3xl border-0 sm:border border-gray-200 dark:border-slate-800 sm:rounded-[2.5rem] shadow-2xl relative z-10 flex flex-col overflow-hidden">
         
-        <div class="w-full bg-[#0a0f1c] text-brand-primary text-[10px] font-mono py-1.5 flex items-center overflow-hidden ticker-wrapper border-b border-gray-800 flex-shrink-0 relative z-40">
-            <div class="ticker-text font-bold tracking-widest w-full">
-                <span class="mr-8 text-gray-500"><i class="ri-pulse-line align-middle"></i> LIVE EXCHANGE RATES</span>
-                <span class="mr-8 text-white">USD/TRY: <span class="text-emerald-400">{{ exchangeRates.USD.toFixed(2) }} ₺</span> <i class="ri-arrow-up-s-fill text-emerald-500"></i></span>
-                <span class="mr-8 text-white">EUR/TRY: <span class="text-emerald-400">{{ exchangeRates.EUR.toFixed(2) }} ₺</span> <i class="ri-arrow-up-s-fill text-emerald-500"></i></span>
-                <span class="mr-8 text-white">EUR/USD: <span class="text-emerald-400">{{ (exchangeRates.EUR / exchangeRates.USD).toFixed(4) }} $</span></span>
-                <span class="mr-8 text-gray-500">*** MARKET DATA ACTIVE ***</span>
+        <div class="w-full bg-[#0a0f1c] text-brand-primary text-[10px] font-mono py-1.5 overflow-hidden flex-shrink-0 relative z-40 ticker-container h-7 flex items-center">
+            <div class="marquee-wrapper speed-normal font-bold tracking-widest">
+                <div>
+                    <span class="mr-8 text-gray-500"><i class="ri-pulse-line align-middle"></i> LIVE EXCHANGE RATES</span>
+                    <span class="mr-8 text-white">USD/TRY: <span class="text-emerald-400">{{ exchangeRates.USD.toFixed(2) }} ₺</span> <i class="ri-arrow-up-s-fill text-emerald-500"></i></span>
+                    <span class="mr-8 text-white">EUR/TRY: <span class="text-emerald-400">{{ exchangeRates.EUR.toFixed(2) }} ₺</span> <i class="ri-arrow-up-s-fill text-emerald-500"></i></span>
+                    <span class="mr-8 text-white">EUR/USD: <span class="text-emerald-400">{{ (exchangeRates.EUR / exchangeRates.USD).toFixed(4) }} $</span></span>
+                    <span class="mr-8 text-gray-500">*** MARKET DATA ACTIVE ***</span>
+                </div>
+                <div>
+                    <span class="mr-8 text-gray-500"><i class="ri-pulse-line align-middle"></i> LIVE EXCHANGE RATES</span>
+                    <span class="mr-8 text-white">USD/TRY: <span class="text-emerald-400">{{ exchangeRates.USD.toFixed(2) }} ₺</span> <i class="ri-arrow-up-s-fill text-emerald-500"></i></span>
+                    <span class="mr-8 text-white">EUR/TRY: <span class="text-emerald-400">{{ exchangeRates.EUR.toFixed(2) }} ₺</span> <i class="ri-arrow-up-s-fill text-emerald-500"></i></span>
+                    <span class="mr-8 text-white">EUR/USD: <span class="text-emerald-400">{{ (exchangeRates.EUR / exchangeRates.USD).toFixed(4) }} $</span></span>
+                    <span class="mr-8 text-gray-500">*** MARKET DATA ACTIVE ***</span>
+                </div>
             </div>
         </div>
 
@@ -71,14 +93,8 @@
                     <i class="ri-arrow-left-s-line text-2xl -ml-0.5"></i>
                 </button>
                 <div class="flex items-center justify-center">
-                    <img src="https://www.eliar.com/wp-content/uploads/2021/03/Eliar-Elektronik_Logo.svg" alt="ELiAR Elektronik" class="h-6 sm:h-8 object-contain brightness-0 dark:invert transition-all duration-300">
+                    <img src="https://www.eliar.com/wp-content/uploads/2021/03/Eliar-Elektronik_Logo.svg" alt="ELiAR" class="h-6 sm:h-8 object-contain brightness-0 dark:invert transition-all duration-300">
                 </div>
-            </div>
-
-            <div class="flex-grow flex justify-center px-4 hidden md:flex">
-                <h1 class="text-sm font-semibold text-slate-800 dark:text-white tracking-wide font-brand">
-                    {{ t('slogan') }}
-                </h1>
             </div>
             
             <div class="flex items-center gap-1.5 sm:gap-2 ml-auto flex-shrink-0">
@@ -149,12 +165,18 @@
             </div>
         </transition>
 
-        <div class="flex-1 overflow-y-auto custom-scroll relative bg-gray-50/50 dark:bg-slate-900/20 pb-32 flex flex-col">
+        <div class="flex-1 overflow-y-auto custom-scroll relative bg-gray-50/50 dark:bg-slate-900/20 flex flex-col pb-6">
             
-            <div v-show="activeTab === 'home'" class="p-6 flex-1 flex flex-col items-center justify-center gap-6 relative">
-                <div class="text-center mb-2 mt-8 w-full max-w-2xl"></div>
+            <div v-show="activeTab === 'home'" class="p-4 sm:p-6 flex-1 flex flex-col items-center">
+                
+                <div class="w-full max-w-2xl text-center mb-6 mt-4">
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-800 dark:text-white tracking-wide font-brand">
+                        {{ t('slogan') }}
+                    </h2>
+                </div>
 
-                <div class="w-full max-w-2xl grid grid-cols-2 sm:grid-cols-3 gap-3 z-10 mb-auto">
+                <div class="w-full max-w-2xl grid grid-cols-2 sm:grid-cols-3 gap-3 z-10 w-full mb-auto">
+                    
                     <button @click="activeTab = 'calculators'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-indigo-500/50 text-center flex flex-col items-center gap-3 transition-all col-span-2 sm:col-span-3 mb-2 bg-gradient-to-r from-indigo-500/5 to-transparent">
                         <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-calculator-fill text-2xl"></i></div>
                         <div>
@@ -164,12 +186,12 @@
                     </button>
 
                     <button @click="activeTab = 'ph_roi'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-primary/50 text-center flex flex-col items-center gap-3 transition-all">
-                        <div class="w-12 h-12 rounded-2xl bg-brand-secondary/10 text-brand-secondary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-line-chart-fill text-2xl"></i></div>
+                        <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-line-chart-fill text-2xl"></i></div>
                         <div><h3 class="font-bold text-xs mb-1 group-hover:text-brand-primary">{{ t('roiTitle') }}</h3></div>
                     </button>
 
                     <button @click="activeTab = 'ph_extra'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-primary/50 text-center flex flex-col items-center gap-3 transition-all">
-                        <div class="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-500 flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-rocket-2-fill text-2xl"></i></div>
+                        <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-rocket-2-fill text-2xl"></i></div>
                         <div><h3 class="font-bold text-xs mb-1 group-hover:text-brand-primary">{{ t('phExtraTitle') }}</h3></div>
                     </button>
 
@@ -179,7 +201,7 @@
                     </button>
                     
                     <button @click="activeTab = 'salt_extra'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-primary/50 text-center flex flex-col items-center gap-3 transition-all">
-                        <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-500 flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-shield-flash-fill text-2xl"></i></div>
+                        <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-shield-flash-fill text-2xl"></i></div>
                         <div><h3 class="font-bold text-xs mb-1 group-hover:text-brand-primary">{{ t('saltExtraTitle') }}</h3></div>
                     </button>
 
@@ -187,12 +209,6 @@
                         <div class="w-12 h-12 rounded-2xl bg-white/20 text-white flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-file-chart-fill text-2xl"></i></div>
                         <div><h3 class="font-bold text-sm text-white mb-1">{{ t('reportTitle') }}</h3></div>
                     </button>
-                </div>
-                
-                <div class="absolute bottom-4 left-0 w-full text-center opacity-20 hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                    <p class="text-[9px] font-mono text-gray-500 dark:text-gray-400 pointer-events-auto inline-block">
-                        <i class="ri-code-s-slash-line align-middle"></i> {{ t('designedBy') }} <strong class="tracking-widest">Eray A. GENÇ</strong>
-                    </p>
                 </div>
             </div>
 
@@ -218,7 +234,7 @@
                 </div>
             </div>
 
-            <div v-show="activeTab === 'salt'" class="p-6 max-w-md mx-auto space-y-4">
+            <div v-show="activeTab === 'salt'" class="p-6 max-w-md mx-auto space-y-4 w-full">
                 <div class="flex items-center justify-between bg-brand-primary/10 dark:bg-brand-primary/5 p-4 rounded-2xl border border-brand-primary/30 mb-2 shadow-sm">
                     <div class="flex flex-col">
                         <span class="text-sm font-bold text-brand-primary flex items-center gap-2"><i class="ri-water-percent-line"></i> {{ t('liquidFactor') }}</span>
@@ -240,7 +256,7 @@
                 <button @click="resetSalt" class="w-full mt-4 py-4 rounded-2xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-base shadow-xl"><i class="ri-refresh-line"></i> {{ t('clearAll') }}</button>
             </div>
 
-            <div v-show="activeTab === 'simulator'" class="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+            <div v-show="activeTab === 'simulator'" class="p-4 sm:p-6 w-full max-w-4xl mx-auto space-y-6">
                 <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-xl border border-brand-info/20">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-brand-info flex items-center gap-2 mb-4"><i class="ri-equalizer-fill text-lg"></i> {{ t('simParams') }}</h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -317,7 +333,7 @@
                 </div>
             </div>
 
-            <div v-show="activeTab === 'ph_roi'" class="relative">
+            <div v-show="activeTab === 'ph_roi'" class="relative w-full max-w-4xl mx-auto p-4 sm:p-6">
                 <div class="sticky top-0 z-30 bg-[#0a0f1c] sm:rounded-b-3xl sm:mx-4 p-4 sm:p-5 shadow-2xl border-b border-x border-slate-700/50 mb-6">
                     <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4">
                         <button v-for="p in ['daily', 'monthly', 'yearly']" :key="p" @click="phPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="phPeriod === p ? 'bg-brand-primary text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
@@ -336,7 +352,7 @@
                             <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-red-200">{{ formatTime(phResults.manualTotalHours) }}</p>
                         </div>
                         <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col justify-center">
-                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-gray-300">{{ t('timeSaved') }}</p><i class="ri-arrow-right-up-line text-brand-primary text-xs"></i></div>
+                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-brand-primary">{{ t('timeSaved') }}</p><i class="ri-arrow-right-up-line text-brand-primary text-xs"></i></div>
                             <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-brand-primary">{{ formatTime(phResults.timeSavedHours) }}</p>
                         </div>
 
@@ -345,8 +361,8 @@
                             <div><p class="text-[9px] text-gray-400">{{ t('lostEnergy') }}</p><p class="text-xs font-bold text-red-200">{{ currSymbol }} {{ formatNumber(phResults.manualEnergyCost) }}</p></div>
                         </div>
                         <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col gap-2 justify-center">
-                            <div><p class="text-[9px] text-gray-300">{{ t('laborSavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.laborSavings) }}</p></div>
-                            <div><p class="text-[9px] text-gray-300">{{ t('energySavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.energySavings) }}</p></div>
+                            <div><p class="text-[9px] text-brand-primary">{{ t('laborSavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.laborSavings) }}</p></div>
+                            <div><p class="text-[9px] text-brand-primary">{{ t('energySavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.energySavings) }}</p></div>
                         </div>
 
                         <div class="bg-gradient-to-r from-[#0d1b2a] to-brand-primary/10 rounded-xl p-3 border border-brand-primary/40 col-span-2 flex items-center justify-between">
@@ -356,7 +372,7 @@
                     </div>
                 </div>
 
-                <div class="px-4 pb-8 max-w-2xl mx-auto">
+                <div class="pb-8">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm p-4">
                         <h3 class="text-xs font-bold uppercase tracking-wider text-brand-primary mb-4 flex items-center gap-2"><i class="ri-test-tube-line text-lg"></i> pH {{ t('measTime') }}</h3>
                         <div class="grid grid-cols-2 gap-3 mt-2">
@@ -372,7 +388,7 @@
                 </div>
             </div>
 
-            <div v-show="activeTab === 'ph_extra'" class="relative">
+            <div v-show="activeTab === 'ph_extra'" class="relative w-full max-w-4xl mx-auto p-4 sm:p-6">
                 <div class="sticky top-0 z-30 bg-[#0a0f1c] sm:rounded-b-3xl sm:mx-4 p-4 sm:p-5 shadow-2xl border-b border-x border-slate-700/50 mb-6">
                     <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4">
                         <button v-for="p in ['monthly', 'yearly']" :key="p" @click="phExtraPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="phExtraPeriod === p ? 'bg-brand-primary text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
@@ -383,24 +399,23 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="bg-gradient-to-br from-slate-900 to-[#0a1917] rounded-2xl p-4 border border-teal-500/30 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-teal-500/20 text-teal-500 text-[8px] font-bold px-2 py-1 rounded-bl-lg">{{ t('rftIncrease') }}</div>
-                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-recycle-line text-teal-500"></i> {{ t('preventedReprocess') }}</p>
+                        <div class="bg-gradient-to-br from-slate-900 to-[#0a1917] rounded-2xl p-4 border border-brand-primary/30 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-brand-primary/20 text-brand-primary text-[8px] font-bold px-2 py-1 rounded-bl-lg">{{ t('rftIncrease') }}</div>
+                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-recycle-line text-brand-primary"></i> {{ t('preventedReprocess') }}</p>
                             <p class="text-2xl font-bold text-brand-primary mb-2">{{ currSymbol }} {{ formatNumber(phExtraResults.reprocessSavings) }}</p>
-                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2"><strong class="text-teal-500">{{ formatNumber(phExtraResults.preventedBatches, 0) }}</strong> {{ t('savedBatches') }}</p>
+                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2"><strong class="text-brand-primary">{{ formatNumber(phExtraResults.preventedBatches, 0) }}</strong> {{ t('savedBatches') }}</p>
                         </div>
                         
-                        <div class="bg-gradient-to-br from-slate-900 to-[#1c0a0a] rounded-2xl p-4 border border-red-500/30 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-red-500/20 text-red-500 text-[8px] font-bold px-2 py-1 rounded-bl-lg">{{ t('heatConservation') }}</div>
-                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-fire-line text-red-500"></i> {{ t('waitHeatLoss') }}</p>
+                        <div class="bg-gradient-to-br from-slate-900 to-[#1c0a0a] rounded-2xl p-4 border border-brand-primary/30 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-brand-primary/20 text-brand-primary text-[8px] font-bold px-2 py-1 rounded-bl-lg">{{ t('heatConservation') }}</div>
+                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-fire-line text-brand-primary"></i> {{ t('waitHeatLoss') }}</p>
                             <p class="text-2xl font-bold text-brand-primary mb-2">{{ currSymbol }} {{ formatNumber(phExtraResults.steamSavings) }}</p>
-                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2"><strong class="text-red-500">{{ formatNumber(phExtraResults.totalWaitHours, 1) }}</strong> {{ t('savedWaitHours') }}</p>
+                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2">{{ t('operatorWaited') }} <strong class="text-brand-primary">{{ formatNumber(phExtraResults.totalWaitHours, 1) }}</strong> {{ t('savedWaitHours') }}</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="px-4 space-y-4 pb-8 max-w-2xl mx-auto">
-                    
+                <div class="pb-8">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm">
                         <button @click="isPhExtraParamsOpen = !isPhExtraParamsOpen" class="w-full p-4 flex items-center justify-between bg-gray-50 dark:bg-slate-800/80 hover:bg-gray-100 dark:hover:bg-slate-700/80 transition-colors outline-none">
                             <div class="flex items-center gap-2 text-brand-primary">
@@ -439,25 +454,20 @@
                         </div>
                     </div>
 
-                    <div class="bg-gradient-to-r from-blue-900/30 to-slate-900 rounded-2xl p-4 border border-blue-500/30 flex gap-3 items-start mt-4">
-                        <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 mt-1"><i class="ri-drop-fill text-xl"></i></div>
-                        <div>
-                            <h4 class="text-sm font-bold text-blue-400 mb-1">{{ t('softWaterAnomaly') }}</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                        <div class="bg-gradient-to-r from-blue-900/30 to-slate-900 rounded-2xl p-4 border border-blue-500/30 flex flex-col gap-2">
+                            <h4 class="text-sm font-bold text-blue-400 flex items-center gap-2"><i class="ri-filter-3-fill text-lg"></i> {{ t('softWaterAnomaly') }}</h4>
                             <p class="text-[10px] text-gray-400 leading-relaxed">{{ t('softWaterDesc') }}</p>
                         </div>
-                    </div>
-
-                    <div class="bg-gradient-to-r from-purple-900/30 to-slate-900 rounded-2xl p-4 border border-purple-500/30 flex gap-3 items-start">
-                        <div class="w-10 h-10 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0 mt-1"><i class="ri-bar-chart-grouped-line text-xl"></i></div>
-                        <div>
-                            <h4 class="text-sm font-bold text-purple-400 mb-1">{{ t('liveDoseOpt') }}</h4>
+                        <div class="bg-gradient-to-r from-purple-900/30 to-slate-900 rounded-2xl p-4 border border-purple-500/30 flex flex-col gap-2">
+                            <h4 class="text-sm font-bold text-purple-400 flex items-center gap-2"><i class="ri-bar-chart-grouped-line text-lg"></i> {{ t('liveDoseOpt') }}</h4>
                             <p class="text-[10px] text-gray-400 leading-relaxed">{{ t('liveDoseDesc') }}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div v-show="activeTab === 'salt_roi'" class="relative">
+            <div v-show="activeTab === 'salt_roi'" class="relative w-full max-w-4xl mx-auto p-4 sm:p-6">
                 <div class="sticky top-0 z-30 bg-[#0a0f1c] sm:rounded-b-3xl sm:mx-4 p-4 sm:p-5 shadow-2xl border-b border-x border-slate-700/50 mb-6">
                     <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4">
                         <button v-for="p in ['daily', 'monthly', 'yearly']" :key="p" @click="saltRoiPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="saltRoiPeriod === p ? 'bg-brand-primary text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
@@ -476,7 +486,7 @@
                             <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-red-200">{{ formatTime(saltRoiResults.manualTotalHours) }}</p>
                         </div>
                         <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col justify-center">
-                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-gray-300">{{ t('timeSaved') }}</p><i class="ri-arrow-right-up-line text-brand-primary text-xs"></i></div>
+                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-brand-primary">{{ t('timeSaved') }}</p><i class="ri-arrow-right-up-line text-brand-primary text-xs"></i></div>
                             <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-brand-primary">{{ formatTime(saltRoiResults.timeSavedHours) }}</p>
                         </div>
                         
@@ -485,8 +495,8 @@
                             <div><p class="text-[9px] text-gray-400">{{ t('lostEnergy') }}</p><p class="text-xs font-bold text-red-200">{{ currSymbol }} {{ formatNumber(saltRoiResults.manualEnergyCost) }}</p></div>
                         </div>
                         <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col gap-2 justify-center">
-                            <div><p class="text-[9px] text-gray-300">{{ t('laborSavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(saltRoiResults.laborSavings) }}</p></div>
-                            <div><p class="text-[9px] text-gray-300">{{ t('energySavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(saltRoiResults.energySavings) }}</p></div>
+                            <div><p class="text-[9px] text-brand-primary">{{ t('laborSavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(saltRoiResults.laborSavings) }}</p></div>
+                            <div><p class="text-[9px] text-brand-primary">{{ t('energySavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(saltRoiResults.energySavings) }}</p></div>
                         </div>
                         
                         <div class="bg-gradient-to-r from-[#0d1b2a] to-brand-primary/10 rounded-xl p-3 border border-brand-primary/40 col-span-2 flex items-center justify-between">
@@ -502,9 +512,9 @@
                     </div>
                 </div>
                 
-                <div class="px-4 pb-8 max-w-2xl mx-auto">
+                <div class="pb-8">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm p-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-brand-primary mb-4 flex items-center gap-2"><i class="ri-test-tube-line text-lg"></i> İletkenlik {{ t('measTime') }}</h3>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-brand-primary mb-4 flex items-center gap-2"><i class="ri-test-tube-line text-lg"></i> {{ t('condMeasTime') }}</h3>
                         <div class="grid grid-cols-2 gap-3 mt-2">
                             <div v-for="k in ['measPerBatch', 'manTimeMin', 'senTimeSec', 'successRate']" :key="k">
                                 <label class="block text-[10px] text-gray-500 font-semibold">{{ t(k) }}</label>
@@ -518,7 +528,7 @@
                 </div>
             </div>
 
-            <div v-show="activeTab === 'salt_extra'" class="relative">
+            <div v-show="activeTab === 'salt_extra'" class="relative w-full max-w-4xl mx-auto p-4 sm:p-6">
                 <div class="sticky top-0 z-30 bg-[#0a0f1c] sm:rounded-b-3xl sm:mx-4 p-4 sm:p-5 shadow-2xl border-b border-x border-slate-700/50 mb-6">
                     <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4">
                         <button v-for="p in ['monthly', 'yearly']" :key="p" @click="saltExtraPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="saltExtraPeriod === p ? 'bg-brand-primary text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
@@ -529,29 +539,28 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="bg-gradient-to-br from-slate-900 to-[#0a1917] rounded-2xl p-4 border border-teal-500/30 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-teal-500/20 text-teal-500 text-[8px] font-bold px-2 py-1 rounded-bl-lg">{{ t('rftIncrease') }}</div>
-                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-recycle-line text-teal-500"></i> {{ t('preventedReprocess') }}</p>
+                        <div class="bg-gradient-to-br from-slate-900 to-[#0a1917] rounded-2xl p-4 border border-brand-primary/30 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-brand-primary/20 text-brand-primary text-[8px] font-bold px-2 py-1 rounded-bl-lg">{{ t('rftIncrease') }}</div>
+                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-recycle-line text-brand-primary"></i> {{ t('preventedReprocess') }}</p>
                             <p class="text-2xl font-bold text-brand-primary mb-2">{{ currSymbol }} {{ formatNumber(saltExtraResults.reprocessSavings) }}</p>
-                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2"><strong class="text-teal-500">{{ formatNumber(saltExtraResults.preventedBatches, 0) }}</strong> {{ t('savedBatches') }}</p>
+                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2"><strong class="text-brand-primary">{{ formatNumber(saltExtraResults.preventedBatches, 0) }}</strong> {{ t('savedBatches') }}</p>
                         </div>
                         
-                        <div class="bg-gradient-to-br from-slate-900 to-[#1c1a0a] rounded-2xl p-4 border border-orange-500/30 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-orange-500/20 text-orange-500 text-[8px] font-bold px-2 py-1 rounded-bl-lg">{{ t('treatmentLoad') }}</div>
-                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-water-flash-fill text-orange-500"></i> {{ t('preventedSaltDisposal') }}</p>
+                        <div class="bg-gradient-to-br from-slate-900 to-[#1c1a0a] rounded-2xl p-4 border border-brand-primary/30 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-brand-primary/20 text-brand-primary text-[8px] font-bold px-2 py-1 rounded-bl-lg">{{ t('treatmentLoad') }}</div>
+                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-water-flash-fill text-brand-primary"></i> {{ t('preventedSaltDisposal') }}</p>
                             <p class="text-2xl font-bold text-brand-primary mb-2">{{ currSymbol }} {{ formatNumber(saltExtraResults.treatmentSavings) }}</p>
-                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2"><strong class="text-orange-500">{{ formatNumber(saltExtraResults.preventedSaltKg, 0) }}</strong> {{ t('preventedSaltKg') }}</p>
+                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2">{{ t('preventedSaltKgPre') }} <strong class="text-brand-primary">{{ formatNumber(saltExtraResults.preventedSaltKg, 0) }}</strong> {{ t('preventedSaltKgPost') }}</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="px-4 space-y-4 pb-8 max-w-2xl mx-auto mt-4">
-                    
+                <div class="pb-8">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm">
                         <button @click="isSaltExtraParamsOpen = !isSaltExtraParamsOpen" class="w-full p-4 flex items-center justify-between bg-gray-50 dark:bg-slate-800/80 hover:bg-gray-100 dark:hover:bg-slate-700/80 transition-colors outline-none">
                             <div class="flex items-center gap-2 text-brand-primary">
                                 <i class="ri-settings-4-line text-lg"></i>
-                                <span class="text-xs font-bold uppercase tracking-wider">{{ t('hiddenLossParams') }}</span>
+                                <span class="text-xs font-bold uppercase tracking-wider">{{ t('condTreatmentParams') }}</span>
                             </div>
                             <div class="flex items-center gap-2 text-[10px] text-gray-500 font-bold">
                                 <span>{{ isSaltExtraParamsOpen ? t('hide') : t('edit') }}</span>
@@ -579,14 +588,14 @@
                                 <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">{{ t('saltPerBatch') }}</label>
                                 <div class="relative">
                                     <input type="number" v-model="saltExtraInputs.saltPerBatch" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-primary outline-none">
-                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">Kg</span>
+                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ t('u_kg') }}</span>
                                 </div>
                             </div>
                             <div class="col-span-2 sm:col-span-1">
                                 <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">{{ t('treatmentCostPerKg') }}</label>
                                 <div class="relative">
                                     <input type="number" step="0.1" v-model="saltExtraInputs.treatmentCostPerKg" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-primary outline-none">
-                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ currSymbol }}/Kg</span>
+                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ currSymbol }}/{{ t('u_kg') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -618,11 +627,11 @@
                 </div>
             </div>
 
-            <div v-show="activeTab === 'report'" class="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+            <div v-show="activeTab === 'report'" class="p-4 sm:p-6 max-w-4xl mx-auto space-y-6 w-full mb-auto">
                 
                 <div class="text-center mb-2">
                     <h2 class="text-2xl font-brand font-bold text-gray-800 dark:text-white">{{ t('reportTitle') }}</h2>
-                    <p class="text-xs text-brand-purple uppercase tracking-widest mt-1 font-bold">Örnek pH Kontrol Analizi (Son 30 Gün)</p>
+                    <p class="text-xs text-brand-purple uppercase tracking-widest mt-1 font-bold">{{ t('reportSubtitle') }}</p>
                 </div>
 
                 <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4 max-w-md mx-auto">
@@ -699,24 +708,9 @@
 
         </div>
 
-        <div class="absolute bottom-0 left-0 w-full z-50 flex flex-col">
+        <div class="w-full flex-shrink-0 z-50 flex flex-col bg-white dark:bg-[#0f172a]">
             
-            <div class="w-full bg-black text-white text-[10px] sm:text-xs font-bold py-1.5 flex items-center overflow-hidden relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)] border-t border-gray-800">
-                <div class="absolute left-0 top-0 bottom-0 bg-red-700 px-3 flex items-center justify-center z-20 border-r border-red-500 shadow-[4px_0_10px_rgba(0,0,0,0.4)]">
-                    <i class="ri-megaphone-fill animate-pulse text-yellow-300 text-sm sm:text-base mr-1.5"></i>
-                    <span class="animate-pulse tracking-wider">NEW!</span>
-                </div>
-                <div class="flash-wrapper w-full overflow-hidden pl-24">
-                    <div class="flash-text font-bold tracking-wide">
-                        <span class="mr-16">{{ t('flashNews1') }}</span>
-                        <span class="mr-16 text-yellow-300">{{ t('flashNews2') }}</span>
-                        <span class="mr-16">{{ t('flashNews1') }}</span>
-                        <span class="mr-16 text-yellow-300">{{ t('flashNews2') }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="w-full bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-xl border-t border-gray-200 dark:border-slate-800 pt-2 px-1 sm:px-2 pb-2 flex justify-between items-center gap-1 overflow-x-auto custom-scroll pb-safe">
+            <div class="w-full border-t border-gray-200 dark:border-slate-800 pt-2 px-1 sm:px-2 pb-2 flex justify-between items-center gap-1 overflow-x-auto custom-scroll">
                 <button @click="activeTab = 'home'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'home' ? 'text-gray-900 dark:text-white' : 'text-gray-400'">
                     <i class="ri-home-smile-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('home') }}</span>
                 </button>
@@ -740,22 +734,52 @@
                 </button>
             </div>
             
-            <div class="w-full bg-[#0a0f1c] text-gray-500 text-[9px] font-mono py-1.5 flex items-center overflow-hidden ticker-wrapper border-t border-gray-800 pb-safe">
-                <div class="ticker-text font-bold tracking-widest w-full">
-                    <span class="mr-12">⚠️ BU YAZILIMIN TÜM HAKLARI GİZLİDİR VE İZİNSİZ PAYLAŞILAMAZ © 2026 ELiAR ELEKTRONİK ⚠️</span>
-                    <span class="mr-12">⚠️ STRICTLY CONFIDENTIAL & DO NOT DISTRIBUTE © 2026 ELiAR ELEKTRONİK ⚠️</span>
-                    <span class="mr-12">⚠️ BU YAZILIMIN TÜM HAKLARI GİZLİDİR VE İZİNSİZ PAYLAŞILAMAZ © 2026 ELiAR ELEKTRONİK ⚠️</span>
+            <div class="w-full bg-black text-white text-[10px] sm:text-xs font-bold flex items-center overflow-hidden relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)] border-t border-gray-800 ticker-container h-8">
+                <div class="absolute left-0 top-0 bottom-0 bg-red-700 px-3 flex items-center justify-center z-20 border-r border-red-500 shadow-[4px_0_10px_rgba(0,0,0,0.4)]">
+                    <i class="ri-megaphone-fill animate-pulse text-yellow-300 text-sm sm:text-base mr-1.5"></i>
+                    <span class="animate-pulse tracking-wider">NEW!</span>
+                </div>
+                <div class="marquee-wrapper speed-slow pl-20 h-full flex items-center">
+                    <div class="h-full flex items-center shrink-0">
+                        <span class="mr-12">{{ t('flashNews1') }}</span>
+                        <span class="mr-12 text-yellow-300">{{ t('flashNews2') }}</span>
+                    </div>
+                    <div class="h-full flex items-center shrink-0">
+                        <span class="mr-12">{{ t('flashNews1') }}</span>
+                        <span class="mr-12 text-yellow-300">{{ t('flashNews2') }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
+            <div class="w-full bg-[#0a0f1c] border-t border-gray-800 flex flex-col pb-safe">
+                <div class="w-full text-gray-500 text-[9px] font-mono py-1.5 overflow-hidden flex items-center ticker-container relative h-6">
+                    <div class="marquee-wrapper speed-slow flex items-center">
+                        <div class="flex shrink-0 px-4">
+                            <span class="mr-12">{{ t('copyrightText') }}</span>
+                            <span class="mr-12">{{ t('copyrightText') }}</span>
+                        </div>
+                        <div class="flex shrink-0 px-4">
+                            <span class="mr-12">{{ t('copyrightText') }}</span>
+                            <span class="mr-12">{{ t('copyrightText') }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full text-center pb-2 pt-0.5">
+                    <p class="text-[9px] font-mono text-gray-600 opacity-40 inline-block pointer-events-none">
+                        <i class="ri-code-s-slash-line align-middle"></i> {{ t('designedBy') }} <strong class="tracking-widest text-gray-500">Eray A. GENÇ</strong>
+                    </p>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
 <script>
+    // FULL 10-LANGUAGE DICTIONARY - EVERYTHING IS TRANSLATED
     const translations = {
         tr: {
-            appTitle: "ELiAR App", home: "Ana Ekran", settingsTab: "Ayarlar",
+            appTitle: "Eray Araç Takımları", home: "Ana Ekran", settingsTab: "Ayarlar",
             calcCategoryTitle: "Hesap Araçları", calcCategoryDesc: "Birim dönüştürücü ve kontrol simülatörü.",
             nav_calcs: "Hesaplar", nav_ph: "pH Kazanç", nav_ph_ex: "pH Ekstra", nav_salt: "İletk. Kazanç", nav_salt_ex: "İletk. Ekstra", nav_report: "Örnek Rapor",
             welcome: "", selectModule: "", 
@@ -765,7 +789,7 @@
             phExtraTitle: "pH Ek Kazanç Simülatörü", phExtraDesc: "Tamir düşüşü, buhar tasarrufu ve gizli kayıp analizi.",
             saltRoiTitle: "İletkenlik Kazanç Simülatörü", saltRoiDesc: "Otomatik dozajlama ve ölçümü için kazanç analizi.",
             saltExtraTitle: "İletkenlik Ek Kazanç Simülatörü", saltExtraDesc: "Arıtma tasarrufu ve ileri seviye proses optimizasyonu.",
-            reportTitle: "Gerçek Rapor Örneği", reportDesc: "Saha verilerine dayalı demo analiz ekranı.",
+            reportTitle: "Gerçek Rapor Örneği", reportSubtitle: "Örnek pH Kontrol Analizi (Son 30 Gün)", reportDesc: "Saha verilerine dayalı demo analiz ekranı.",
             settingsDesc: "İşletme ve maliyet verilerini tek merkezden yönetin.", settingsInfo: "Buraya girdiğiniz değerler tüm hesaplama modüllerinde ortak kullanılır.",
             clearAll: "Tümünü Sıfırla", liquidFactor: "Sıvı Çarpanı",
             ms: "İletkenlik", gl: "Konsantrasyon", liq: "Sıvı", d: "Yoğunluk", be: "Bome", w: "Yüzde",
@@ -781,18 +805,18 @@
             totalGain: "Toplam Ekstra Finansal Kazanç", manualSys: "Manuel Sistem", sensorSys: "Sensörlü (Kazanç)",
             timeSpent: "Harcanan Süre", timeSaved: "Kazanılan Süre", lostLabor: "Kayıp İşçilik", lostEnergy: "Kayıp Enerji",
             laborSavings: "İşçilik Tasarrufu", energySavings: "Enerji Tasarrufu", capacityRev: "Kapasite & Ciro", extraBatch: "Parti",
-            bizData: "İşletme Verileri", measTime: "Ölçüm & Süre", costs: "Maliyet Çarpanları",
+            bizData: "İşletme Verileri", measTime: "Ölçüm & Süre", condMeasTime: "İletkenlik Ölçüm & Süre", costs: "Maliyet Çarpanları",
             machines: "Makine Sayısı", batches: "İş Emri (Günde)", days: "Aylık Çalışma", measPerBatch: "Ölçüm (İş Emri Başı)",
             manTimeMin: "Manuel Ölçüm", senTimeSec: "Sensör Ölçüm", successRate: "Adım Atlama",
             opSalary: "Opr. Toplam Maliyeti", opMachines: "Baktığı Makine", shifts: "Vardiya Sayısı", shiftHours: "Vardiya Saati",
             electricKw: "Makine Elektrik", electricPrice: "Elektrik Fiyatı", steamTon: "Makine Buhar", steamPrice: "Buhar Fiyatı",
             fabricPerBatch: "Kumaş/İş Emri", fabricPrice: "Satış Fiyatı",
             daily: "Günlük", monthly: "Aylık", yearly: "Yıllık",
-            u_pcs: "Adet", u_day: "Gün", u_min: "Dk", u_sec: "Sn", u_hour: "Saat",
+            u_pcs: "Adet", u_day: "Gün", u_min: "Dk", u_sec: "Sn", u_hour: "Saat", u_kg: "Kg",
 
-            // Eklenen Yeni Çeviriler (TR)
             slogan: "Akıllı Boyama Yolculuğunda Sensörler",
             hiddenLossParams: "Gizli Kayıp Parametreleri",
+            condTreatmentParams: "İletkenlik & Arıtma Parametreleri",
             currentReprocess: "Mevcut Tamir Oranı (%)",
             targetReprocess: "Hedef Tamir Oranı (%)",
             costPerReprocess: "Ort. 1 Parti Tamir Maliyeti",
@@ -805,9 +829,11 @@
             heatConservation: "ISI KORUNUMU",
             waitHeatLoss: "Bekleme Isı / Buhar Kaybı",
             savedWaitHours: "saatlik ısı telafisi.",
+            operatorWaited: "Operatör beklerken harcanan",
             treatmentLoad: "ARITMA YÜKÜ",
             preventedSaltDisposal: "Bertaraf Edilen Fazla Kimyasal",
-            preventedSaltKg: "kg kimyasal.",
+            preventedSaltKgPre: "Arıtmaya gitmesi önlenen",
+            preventedSaltKgPost: "kg kimyasal.",
             softWaterAnomaly: "Su Filtrasyon Anomalisi",
             softWaterDesc: "İlk su alımında saf suyun iletkenlik değeri ölçülerek, yumuşak su hazırlama dairesindeki reçine problemleri boyama başlamadan tespit edilir.",
             liveDoseOpt: "Canlı Dozaj Eğrisi Optimizasyonu",
@@ -829,10 +855,11 @@
             phTotalLabel: "pH - Toplam Ekstra Finansal Kazanç",
             saltTotalLabel: "İletkenlik - Toplam Ekstra Finansal Kazanç",
             designedBy: "Designed & Powered by",
-            saveClose: "Kaydet ve Kapat"
+            saveClose: "Kaydet ve Kapat",
+            copyrightText: "⚠️ BU YAZILIMIN TÜM HAKLARI GİZLİDİR VE İZİNSİZ PAYLAŞILAMAZ © 2026 ELiAR ELEKTRONİK ⚠️"
         },
         en: {
-            appTitle: "ELiAR App", home: "Home", settingsTab: "Settings",
+            appTitle: "Eray Toolkits", home: "Home", settingsTab: "Settings",
             calcCategoryTitle: "Calculation Tools", calcCategoryDesc: "Unit converter and control simulator.",
             nav_calcs: "Calculators", nav_ph: "pH ROI", nav_ph_ex: "pH Extra", nav_salt: "Cond. ROI", nav_salt_ex: "Cond. Extra", nav_report: "Demo Report",
             welcome: "", selectModule: "", 
@@ -842,7 +869,7 @@
             phExtraTitle: "pH Extra Profit Simulator", phExtraDesc: "Reprocess reduction, steam savings and hidden loss analysis.",
             saltRoiTitle: "Conductivity Profit Simulator", saltRoiDesc: "Automated dosing and measurement ROI.",
             saltExtraTitle: "Conductivity Extra Profit Simulator", saltExtraDesc: "Treatment savings and advanced process optimization.",
-            reportTitle: "Real Report Example", reportDesc: "Demo analysis screen based on field data.",
+            reportTitle: "Real Report Example", reportSubtitle: "Sample pH Control Analysis (Last 30 Days)", reportDesc: "Demo analysis screen based on field data.",
             settingsDesc: "Manage business and cost data from one center.", settingsInfo: "Values entered here are used globally in all modules.",
             clearAll: "Clear All", liquidFactor: "Liquid Factor",
             ms: "Conductivity", gl: "Concentration", liq: "Liquid", d: "Density", be: "Baume", w: "Percentage",
@@ -858,18 +885,18 @@
             totalGain: "Total Extra Gain", manualSys: "Manual System", sensorSys: "Sensor (Gain)",
             timeSpent: "Time Spent", timeSaved: "Time Saved", lostLabor: "Lost Labor", lostEnergy: "Lost Energy",
             laborSavings: "Labor Savings", energySavings: "Energy Savings", capacityRev: "Capacity & Revenue", extraBatch: "Batches",
-            bizData: "Business Data", measTime: "Measurement & Time", costs: "Cost Multipliers",
+            bizData: "Business Data", measTime: "Measurement & Time", condMeasTime: "Cond. Measurement & Time", costs: "Cost Multipliers",
             machines: "Machine Count", batches: "Batches (Daily)", days: "Work Days", measPerBatch: "Meas. per Batch",
             manTimeMin: "Manual Time", senTimeSec: "Sensor Time", successRate: "Success Rate",
             opSalary: "Operator Cost", opMachines: "Machines per Op.", shifts: "Shifts", shiftHours: "Shift Hours",
             electricKw: "Mach. Electric", electricPrice: "Electric Price", steamTon: "Mach. Steam", steamPrice: "Steam Price",
             fabricPerBatch: "Fabric / Batch", fabricPrice: "Sale Price",
             daily: "Daily", monthly: "Monthly", yearly: "Yearly",
-            u_pcs: "Pcs", u_day: "Day", u_min: "Min", u_sec: "Sec", u_hour: "Hour",
+            u_pcs: "Pcs", u_day: "Day", u_min: "Min", u_sec: "Sec", u_hour: "Hour", u_kg: "Kg",
 
-            // Eklenen Yeni Çeviriler (EN)
             slogan: "Sensors in the Smart Dyeing Journey",
             hiddenLossParams: "Hidden Loss Parameters",
+            condTreatmentParams: "Conductivity & Treatment Parameters",
             currentReprocess: "Current Reprocess Rate (%)",
             targetReprocess: "Target Reprocess Rate (%)",
             costPerReprocess: "Cost per Reprocess Batch",
@@ -882,9 +909,11 @@
             heatConservation: "HEAT CONSERVATION",
             waitHeatLoss: "Standby Heat / Steam Loss",
             savedWaitHours: "hours of heat compensation.",
+            operatorWaited: "Operator wait time cost:",
             treatmentLoad: "TREATMENT LOAD",
             preventedSaltDisposal: "Prevented Excess Chemical Disposal",
-            preventedSaltKg: "kg chemical.",
+            preventedSaltKgPre: "Prevented",
+            preventedSaltKgPost: "kg of chemical from treatment.",
             softWaterAnomaly: "Water Filtration Anomaly",
             softWaterDesc: "By measuring the conductivity of pure water during initial intake, resin problems in the soft water preparation department are detected before dyeing begins.",
             liveDoseOpt: "Live Dosing Curve Optimization",
@@ -906,9 +935,392 @@
             phTotalLabel: "pH - Total Extra Financial Gain",
             saltTotalLabel: "Conductivity - Total Extra Financial Gain",
             designedBy: "Designed & Powered by",
-            saveClose: "Save and Close"
+            saveClose: "Save and Close",
+            copyrightText: "⚠️ STRICTLY CONFIDENTIAL & DO NOT DISTRIBUTE © 2026 ELiAR ELEKTRONİK ⚠️"
+        },
+        de: {
+            appTitle: "Eray Werkzeuge", home: "Start", settingsTab: "Einst.",
+            calcCategoryTitle: "Berechnungstools", calcCategoryDesc: "Einheitenumrechner und Simulator.",
+            nav_calcs: "Rechner", nav_ph: "pH ROI", nav_ph_ex: "pH Extra", nav_salt: "Leitf. ROI", nav_salt_ex: "Leitf. Extra", nav_report: "Bericht",
+            welcome: "", selectModule: "",
+            saltTitle: "Leitfähigkeitsrechner", saltDesc: "Leitfähigkeit, Konzentration, Baumé und Flüssigkeit.",
+            simTitle: "Leitfähigkeits-Simulator", simDesc: "Echte g/L Erkennung über Massenbilanz.",
+            roiTitle: "pH Gewinn Simulator", roiDesc: "Zeit-, Arbeits-, Energie- und Kapazitätsanalyse.",
+            phExtraTitle: "pH Extra Gewinn Simulator", phExtraDesc: "Reprozessreduzierung und Dampfeinsparung.",
+            saltRoiTitle: "Leitfähigkeit Gewinn Simulator", saltRoiDesc: "ROI für automatische Dosierung.",
+            saltExtraTitle: "Leitfähigkeit Extra Gewinn Simulator", saltExtraDesc: "Behandlungseinsparungen und erweiterte Optimierung.",
+            reportTitle: "Reales Berichtsmuster", reportSubtitle: "Beispiel pH-Kontrollanalyse", reportDesc: "Demo-Analyse-Bildschirm basierend auf Felddaten.",
+            settingsDesc: "Betriebs- und Kostendaten zentral verwalten.", settingsInfo: "Werte werden global verwendet.",
+            clearAll: "Alles löschen", liquidFactor: "Flüssig-Faktor",
+            ms: "Leitfähigkeit", gl: "Konzentration", liq: "Flüssigkeit", d: "Dichte", be: "Baumé", w: "Prozentsatz",
+            simParams: "Rezeptparameter", sim_kilo: "Stoff (kg)", sim_akBoyaOran: "Flottenverhältnis", sim_tuzLitresi: "Flüssigkeit (L)", sim_boya: "Farbe (L)", otherChems: "Chemikalien", sim_soda1: "Soda 1", sim_soda2: "Soda 2", sim_alkali: "Alkali", sim_bikarbonat: "Bicarbonate", sim_kimyasal: "Chemikalie", sim_hafiza1: "Speicher 1", sim_altLimit: "Untere Gr.", sim_ustLimit: "Obere Gr.", tuzBastan: "Leitfähigkeit Zuerst", boyaBastan: "Farbe Zuerst", expectedGL: "Zielkonzentration", lowerLimit: "Untere Grenze", upperLimit: "Obere Grenze", sensorShouldRead: "Sensor sollte lesen",
+            totalGain: "Zusätzlicher Gewinn", manualSys: "Manuelles System", sensorSys: "Sensor (Gewinn)",
+            timeSpent: "Verbrachte Zeit", timeSaved: "Ersparte Zeit", lostLabor: "Verlorene Arbeit", lostEnergy: "Verlorene Energie",
+            laborSavings: "Arbeitsersparnis", energySavings: "Energieersparnis", capacityRev: "Kapazität & Umsatz", extraBatch: "Chargen",
+            bizData: "Betriebsdaten", measTime: "Messung & Zeit", condMeasTime: "Leitfähigkeit Messung", costs: "Kostenfaktoren",
+            machines: "Maschinen", batches: "Chargen (tägl)", days: "Arbeitstage", measPerBatch: "Mess. pro Charge",
+            manTimeMin: "Manuelle Zeit", senTimeSec: "Sensorzeit", successRate: "Erfolgsrate",
+            opSalary: "Bedienerkosten", opMachines: "Maschinen/Bed.", shifts: "Schichten", shiftHours: "Schichtstunden",
+            electricKw: "Strom Maschine", electricPrice: "Strompreis", steamTon: "Dampf Maschine", steamPrice: "Dampfpreis",
+            fabricPerBatch: "Stoff/Charge", fabricPrice: "Verkaufspreis",
+            daily: "Täglich", monthly: "Monatlich", yearly: "Jährlich",
+            u_pcs: "Stk", u_day: "Tag", u_min: "Min", u_sec: "Sek", u_hour: "Std", u_kg: "Kg",
+            slogan: "Sensoren in der intelligenten Färbereise",
+            hiddenLossParams: "Parameter für verborgene Verluste",
+            condTreatmentParams: "Leitfähigkeit & Behandlung",
+            currentReprocess: "Aktuelle Reprozessrate (%)",
+            targetReprocess: "Ziel Reprozessrate (%)",
+            costPerReprocess: "Kosten pro Reprozess",
+            steamWaste: "Standby Dampfverlust",
+            saltPerBatch: "Ø Chemikalien pro Charge",
+            treatmentCostPerKg: "Behandlungskosten (Entsorgung)",
+            rftIncrease: "RFT-STEIGERUNG",
+            preventedReprocess: "Verhinderte Reprozesse",
+            savedBatches: "Chargen gerettet.",
+            heatConservation: "WÄRMEERHALTUNG",
+            waitHeatLoss: "Standby Wärme-/Dampfverlust",
+            savedWaitHours: "Stunden Wärmekompensation.",
+            operatorWaited: "Bedienerwartezeit:",
+            treatmentLoad: "BEHANDLUNGSLAST",
+            preventedSaltDisposal: "Verhinderte Chemikalienentsorgung",
+            preventedSaltKgPre: "Verhinderte",
+            preventedSaltKgPost: "kg Chemikalien.",
+            softWaterAnomaly: "Weichwasser-Anomalie", softWaterDesc: "Durch Messung der Leitfähigkeit des reinen Wassers werden Harzprobleme erkannt, bevor das Färben beginnt.",
+            liveDoseOpt: "Live-Dosierkurven-Optimierung", liveDoseDesc: "Ungewollter schneller pH-Anstieg bei Soda-Dosierung wird sofort sichtbar zur Optimierung.",
+            fabricCond: "Rohstoff-Leitfähigkeit", fabricCondDesc: "Verunreinigungen aus der Natur der Baumwolle werden beim Beladen der Maschine sofort erkannt.",
+            hotWashTrans: "Heißwäsche-Übergang", hotWashDesc: "Live-Überwachung der Ionendichte vor der Heißwäsche verhindert mögliche Farbausfällungen.",
+            rinseOpt: "Spül-Optimierung", rinseDesc: "Die Verfolgung der Leitfähigkeit beweist, dass der Stoff völlig chemikalienfrei ist.",
+            trueLiquor: "Echte Flottenerkennung", trueLiquorDesc: "Dank Massen-Volumen-Bilanz wird die echte Flotte berechnet und live überwacht.",
+            flashNews1: "📣 Unsere Bemühungen zur Prozessoptimierung laufen auf Hochtouren. Stellen Sie sicher, dass Ihr Sensor-Kit installiert ist!",
+            flashNews2: "🚀 INTELLIGENTE SALZANFORDERUNG KOMMT BALD!!!",
+            edit: "Bearbeiten", hide: "Verbergen",
+            phExtraTotalLabel: "pH Verborgene Verluste - Total", saltExtraTotalLabel: "Leitfähigkeit & Behandlung - Total",
+            phTotalLabel: "pH - Zusätzlicher finanzieller Gewinn", saltTotalLabel: "Leitfähigkeit - Zusätzlicher Gewinn",
+            designedBy: "Designed & Powered by", saveClose: "Speichern & Schließen",
+            copyrightText: "⚠️ STRENG VERTRAULICH & NICHT VERTEILEN © 2026 ELiAR ELEKTRONİK ⚠️"
+        },
+        pt: {
+            appTitle: "Eray Ferramentas", home: "Início", settingsTab: "Config",
+            calcCategoryTitle: "Ferramentas", calcCategoryDesc: "Conversor de unidades e simulador.",
+            nav_calcs: "Cálculos", nav_ph: "ROI pH", nav_ph_ex: "pH Extra", nav_salt: "ROI Cond.", nav_salt_ex: "Cond. Extra", nav_report: "Relatório",
+            welcome: "", selectModule: "",
+            saltTitle: "Calculadora de Condutividade", saltDesc: "Condutividade, Concentração, Baumé e Líquido.",
+            simTitle: "Simulador Controle de Condutividade", simDesc: "Detecção real de g/L via fórmula de saldo.",
+            roiTitle: "Simulador de Lucro pH", roiDesc: "Análise de tempo, trabalho, energia e capacidade.",
+            phExtraTitle: "Simulador Lucro Extra pH", phExtraDesc: "Redução de reprocesso e economia de vapor.",
+            saltRoiTitle: "Simulador de Lucro Condutividade", saltRoiDesc: "ROI de medição e dosagem automática.",
+            saltExtraTitle: "Simulador Lucro Extra Cond.", saltExtraDesc: "Economia de tratamento e otimização avançada.",
+            reportTitle: "Exemplo de Relatório", reportSubtitle: "Análise de Amostra", reportDesc: "Tela de análise baseada em dados reais.",
+            settingsDesc: "Gerenciar dados de negócios e custos.", settingsInfo: "Valores usados globalmente.",
+            clearAll: "Limpar Tudo", liquidFactor: "Fator Líquido",
+            ms: "Condutividade", gl: "Concentração", liq: "Líquido", d: "Densidade", be: "Baumé", w: "Porcentagem",
+            simParams: "Parâmetros de Receita", sim_kilo: "Tecido (kg)", sim_akBoyaOran: "Relação Banho", sim_tuzLitresi: "Vol. Líquido (L)", sim_boya: "Corante (L)", otherChems: "Químicos", sim_soda1: "Soda 1", sim_soda2: "Soda 2", sim_alkali: "Álcali", sim_bikarbonat: "Bicarbonato", sim_kimyasal: "Químico", sim_hafiza1: "Memória 1", sim_altLimit: "Lim. Inf", sim_ustLimit: "Lim. Sup", tuzBastan: "Condutividade Primeiro", boyaBastan: "Corante Primeiro", expectedGL: "Concentração Alvo", lowerLimit: "Limite Inf.", upperLimit: "Limite Sup.", sensorShouldRead: "Sensor deve ler",
+            totalGain: "Ganho Extra Total", manualSys: "Sistema Manual", sensorSys: "Sensor (Ganho)",
+            timeSpent: "Tempo Gasto", timeSaved: "Tempo Economizado", lostLabor: "Trabalho Perdido", lostEnergy: "Energia Perdida",
+            laborSavings: "Econ. Trabalho", energySavings: "Econ. Energia", capacityRev: "Capacidade & Receita", extraBatch: "Lotes",
+            bizData: "Dados Empresa", measTime: "Medição", condMeasTime: "Tempo de Condutividade", costs: "Custos",
+            machines: "Máquinas", batches: "Lotes (Diário)", days: "Dias Úteis", measPerBatch: "Medição p/ Lote",
+            manTimeMin: "Tempo Manual", senTimeSec: "Tempo Sensor", successRate: "Taxa Sucesso",
+            opSalary: "Custo Operador", opMachines: "Máqs/Op.", shifts: "Turnos", shiftHours: "Horas/Turno",
+            electricKw: "Eletricidade Máq", electricPrice: "Preço Elétrico", steamTon: "Vapor Máq", steamPrice: "Preço Vapor",
+            fabricPerBatch: "Tecido p/ Lote", fabricPrice: "Preço Venda",
+            daily: "Diário", monthly: "Mensal", yearly: "Anual", u_pcs: "Unid", u_day: "Dia", u_min: "Min", u_sec: "Seg", u_hour: "Hora", u_kg: "Kg",
+            slogan: "Sensores na Jornada Inteligente de Tingimento",
+            hiddenLossParams: "Parâmetros de Perda Oculta", condTreatmentParams: "Parâmetros de Tratamento",
+            currentReprocess: "Taxa Reprocesso Atual (%)", targetReprocess: "Taxa Reprocesso Alvo (%)", costPerReprocess: "Custo por Reprocesso",
+            steamWaste: "Perda de Vapor (Standby)", saltPerBatch: "Químico Médio p/ Lote", treatmentCostPerKg: "Custo de Tratamento",
+            rftIncrease: "AUMENTO RFT", preventedReprocess: "Reprocesso Evitado", savedBatches: "Lotes salvos.",
+            heatConservation: "CONSERVAÇÃO DE CALOR", waitHeatLoss: "Perda de Calor (Standby)", savedWaitHours: "horas salvas.",
+            operatorWaited: "Espera:", treatmentLoad: "CARGA DE TRATAMENTO", preventedSaltDisposal: "Descarte Químico Evitado",
+            preventedSaltKgPre: "Evitou", preventedSaltKgPost: "kg de químicos.",
+            softWaterAnomaly: "Anomalia Água Branda", softWaterDesc: "Problemas na resina detectados antes do tingimento.",
+            liveDoseOpt: "Otimização de Dosagem", liveDoseDesc: "Visibilidade instantânea do pH para otimização.",
+            fabricCond: "Condutividade Tecido", fabricCondDesc: "Impurezas do algodão notadas instantaneamente.",
+            hotWashTrans: "Transição Lavagem Quente", hotWashDesc: "Monitoramento ao vivo previne precipitação de cor.",
+            rinseOpt: "Otimização Enxágue", rinseDesc: "Rastreamento prova que o tecido está livre de químicos.",
+            trueLiquor: "Detecção Banho Real", trueLiquorDesc: "Monitoramento contínuo durante todo o lote.",
+            flashNews1: "📣 Nossa Otimização de Processos continua. Garanta seu Sensor Kit instalado!", flashNews2: "🚀 PEDIDO DE SAL INTELIGENTE EM BREVE!!!",
+            edit: "Editar", hide: "Ocultar", phExtraTotalLabel: "pH Perdas Ocultas - Total", saltExtraTotalLabel: "Cond. e Tratamento - Total",
+            phTotalLabel: "pH - Ganho Financeiro Extra", saltTotalLabel: "Condutividade - Ganho Financeiro",
+            designedBy: "Designed & Powered by", saveClose: "Salvar e Fechar",
+            copyrightText: "⚠️ ESTRITAMENTE CONFIDENCIAL E NÃO DISTRIBUIR © 2026 ELiAR ELEKTRONİK ⚠️"
+        },
+        ru: {
+            appTitle: "Eray Инструменты", home: "Главная", settingsTab: "Настройки",
+            calcCategoryTitle: "Инструменты", calcCategoryDesc: "Конвертер и симулятор.",
+            nav_calcs: "Расчеты", nav_ph: "pH ROI", nav_ph_ex: "pH Экстра", nav_salt: "Пров. ROI", nav_salt_ex: "Пров. Экстра", nav_report: "Отчет",
+            welcome: "", selectModule: "",
+            saltTitle: "Калькулятор проводимости", saltDesc: "Проводимость, концентрация, жидкость.",
+            simTitle: "Симулятор проводимости", simDesc: "Обнаружение g/L через баланс массы.",
+            roiTitle: "pH Симулятор прибыли", roiDesc: "Анализ времени, труда, энергии.",
+            phExtraTitle: "pH Экстра Симулятор", phExtraDesc: "Снижение повторной обработки.",
+            saltRoiTitle: "Симулятор прибыли проводимости", saltRoiDesc: "ROI автоматического дозирования.",
+            saltExtraTitle: "Экстра Симулятор проводимости", saltExtraDesc: "Экономия на очистке.",
+            reportTitle: "Пример отчета", reportSubtitle: "Анализ контроля", reportDesc: "Демо на основе полевых данных.",
+            settingsDesc: "Управление данными.", settingsInfo: "Глобальные значения.",
+            clearAll: "Очистить", liquidFactor: "Коэфф. жидкости",
+            ms: "Пров-сть", gl: "Конц-ия", liq: "Жидкость", d: "Плотность", be: "Боме", w: "Процент",
+            simParams: "Параметры", sim_kilo: "Ткань (кг)", sim_akBoyaOran: "Модуль", sim_tuzLitresi: "Жидкость (Л)", sim_boya: "Краситель (Л)", otherChems: "Химикаты", sim_soda1: "Сода 1", sim_soda2: "Сода 2", sim_alkali: "Щелочь", sim_bikarbonat: "Бикарбонат", sim_kimyasal: "Химикат", sim_hafiza1: "Память 1", sim_altLimit: "Мин. предел", sim_ustLimit: "Макс. предел", tuzBastan: "Пров-сть Сначала", boyaBastan: "Краситель Сначала", expectedGL: "Цель", lowerLimit: "Мин.", upperLimit: "Макс.", sensorShouldRead: "Датчик должен читать",
+            totalGain: "Общая прибыль", manualSys: "Ручная", sensorSys: "Датчик",
+            timeSpent: "Затрачено", timeSaved: "Сэкономлено", lostLabor: "Потеря труда", lostEnergy: "Потеря энергии",
+            laborSavings: "Экономия труда", energySavings: "Экономия энергии", capacityRev: "Вместимость", extraBatch: "Партии",
+            bizData: "Бизнес данные", measTime: "Измерение", condMeasTime: "Время пров-сти", costs: "Затраты",
+            machines: "Машины", batches: "Партии/день", days: "Дни", measPerBatch: "Изм/Партия",
+            manTimeMin: "Ручное время", senTimeSec: "Время датчика", successRate: "Успех (%)",
+            opSalary: "Зарплата", opMachines: "Маш/Опер", shifts: "Смены", shiftHours: "Часы",
+            electricKw: "Электр. (кВт)", electricPrice: "Цена кВт", steamTon: "Пар", steamPrice: "Цена пара",
+            fabricPerBatch: "Ткань/Партия", fabricPrice: "Цена ткани",
+            daily: "День", monthly: "Месяц", yearly: "Год", u_pcs: "шт", u_day: "дн", u_min: "мин", u_sec: "сек", u_hour: "ч", u_kg: "кг",
+            slogan: "Датчики в умном окрашивании",
+            hiddenLossParams: "Скрытые потери", condTreatmentParams: "Параметры очистки",
+            currentReprocess: "Текущий брак (%)", targetReprocess: "Целевой брак (%)", costPerReprocess: "Стоимость брака",
+            steamWaste: "Потеря пара", saltPerBatch: "Химикаты/Партия", treatmentCostPerKg: "Стоимость очистки",
+            rftIncrease: "РОСТ RFT", preventedReprocess: "Предотвращенный брак", savedBatches: "партий спасено.",
+            heatConservation: "СОХРАНЕНИЕ ТЕПЛА", waitHeatLoss: "Потеря тепла", savedWaitHours: "ч. спасено.",
+            operatorWaited: "Ожидание:", treatmentLoad: "НАГРУЗКА", preventedSaltDisposal: "Предотвращенный сброс",
+            preventedSaltKgPre: "Спасено", preventedSaltKgPost: "кг химикатов.",
+            softWaterAnomaly: "Аномалия воды", softWaterDesc: "Проблемы смолы обнаруживаются до начала.",
+            liveDoseOpt: "Оптимизация дозировки", liveDoseDesc: "Быстрый рост pH виден мгновенно.",
+            fabricCond: "Проводимость ткани", fabricCondDesc: "Примеси хлопка замечаются мгновенно.",
+            hotWashTrans: "Переход к горячей стирке", hotWashDesc: "Мониторинг предотвращает осаждение.",
+            rinseOpt: "Оптимизация полоскания", rinseDesc: "Доказывает отсутствие химикатов.",
+            trueLiquor: "Истинный объем", trueLiquorDesc: "Учитывает скрытую воду ткани.",
+            flashNews1: "📣 Оптимизация процессов продолжается. Убедитесь, что датчики установлены!", flashNews2: "🚀 УМНАЯ СОЛЬ СКОРО!!!",
+            edit: "Редакт", hide: "Скрыть", phExtraTotalLabel: "pH Скрытые потери", saltExtraTotalLabel: "Пров. и Очистка",
+            phTotalLabel: "pH Прибыль", saltTotalLabel: "Проводимость Прибыль",
+            designedBy: "Designed & Powered by", saveClose: "Сохранить",
+            copyrightText: "⚠️ СТРОГО КОНФИДЕНЦИАЛЬНО И НЕ РАСПРОСТРАНЯТЬ © 2026 ELiAR ELEKTRONİK ⚠️"
+        },
+        ar: {
+            appTitle: "Eray أدوات", home: "الرئيسية", settingsTab: "إعدادات",
+            calcCategoryTitle: "أدوات الحساب", calcCategoryDesc: "محول الوحدات والمحاكي.",
+            nav_calcs: "حاسبة", nav_ph: "pH العائد", nav_ph_ex: "pH إضافي", nav_salt: "الموصلية", nav_salt_ex: "موصلية+", nav_report: "تقرير",
+            welcome: "", selectModule: "",
+            saltTitle: "حاسبة الموصلية", saltDesc: "تحويل الموصلية والتركيز.",
+            simTitle: "محاكي الموصلية", simDesc: "اكتشاف g/L الحقيقي.",
+            roiTitle: "محاكي أرباح pH", roiDesc: "تحليل الوقت والعمل.",
+            phExtraTitle: "محاكي أرباح إضافية pH", phExtraDesc: "تقليل إعادة المعالجة.",
+            saltRoiTitle: "محاكي أرباح الموصلية", saltRoiDesc: "الجرعات التلقائية.",
+            saltExtraTitle: "محاكي أرباح إضافية للموصلية", saltExtraDesc: "توفير المعالجة.",
+            reportTitle: "تقرير العينة", reportSubtitle: "تحليل السيطرة", reportDesc: "شاشة تحليل تجريبية.",
+            settingsDesc: "إدارة البيانات.", settingsInfo: "تستخدم عالميا.",
+            clearAll: "مسح الكل", liquidFactor: "عامل السائل",
+            ms: "موصلية", gl: "تركيز", liq: "سائل", d: "كثافة", be: "بوميه", w: "نسبة",
+            simParams: "المعلمات", sim_kilo: "قماش (كغ)", sim_akBoyaOran: "نسبة", sim_tuzLitresi: "سائل (لتر)", sim_boya: "صبغة (لتر)", otherChems: "مواد كيميائية", sim_soda1: "صودا 1", sim_soda2: "صودا 2", sim_alkali: "قلوي", sim_bikarbonat: "بيكربونات", sim_kimyasal: "كيميائي", sim_hafiza1: "ذاكرة 1", sim_altLimit: "حد أدنى", sim_ustLimit: "حد أقصى", tuzBastan: "محاكاة الموصلية", boyaBastan: "محاكاة الصبغة", expectedGL: "التركيز المتوقع", lowerLimit: "أدنى", upperLimit: "أقصى", sensorShouldRead: "يجب أن يقرأ المستشعر",
+            totalGain: "إجمالي الربح", manualSys: "يدوي", sensorSys: "مستشعر",
+            timeSpent: "الوقت المستغرق", timeSaved: "الوقت الموفر", lostLabor: "فقدان العمل", lostEnergy: "فقدان الطاقة",
+            laborSavings: "توفير العمل", energySavings: "توفير الطاقة", capacityRev: "السعة", extraBatch: "دفعات",
+            bizData: "بيانات العمل", measTime: "القياس", condMeasTime: "وقت الموصلية", costs: "التكاليف",
+            machines: "آلات", batches: "دفعات/يوم", days: "أيام", measPerBatch: "قياس/دفعة",
+            manTimeMin: "وقت يدوي", senTimeSec: "وقت المستشعر", successRate: "نجاح (%)",
+            opSalary: "راتب", opMachines: "آلة/عامل", shifts: "ورديات", shiftHours: "ساعات",
+            electricKw: "كهرباء", electricPrice: "سعر الكهرباء", steamTon: "بخار", steamPrice: "سعر البخار",
+            fabricPerBatch: "قماش/دفعة", fabricPrice: "سعر البيع",
+            daily: "يومي", monthly: "شهري", yearly: "سنوي", u_pcs: "قطعة", u_day: "يوم", u_min: "دقيقة", u_sec: "ثانية", u_hour: "ساعة", u_kg: "كغ",
+            slogan: "أجهزة الاستشعار في رحلة الصباغة الذكية",
+            hiddenLossParams: "خسائر مخفية", condTreatmentParams: "معلمات المعالجة",
+            currentReprocess: "إعادة معالجة (%)", targetReprocess: "هدف (%)", costPerReprocess: "تكلفة الخلل",
+            steamWaste: "هدر البخار", saltPerBatch: "مواد/دفعة", treatmentCostPerKg: "تكلفة المعالجة",
+            rftIncrease: "زيادة RFT", preventedReprocess: "إعادة المعالجة الممنوعة", savedBatches: "دفعات تم حفظها.",
+            heatConservation: "حفظ الحرارة", waitHeatLoss: "فقدان الحرارة", savedWaitHours: "ساعات محفوظة.",
+            operatorWaited: "انتظار:", treatmentLoad: "عبء المعالجة", preventedSaltDisposal: "تخلص كيميائي ممنوع",
+            preventedSaltKgPre: "تم منع", preventedSaltKgPost: "كغ مواد.",
+            softWaterAnomaly: "شذوذ المياه", softWaterDesc: "اكتشاف المشاكل قبل الصباغة.",
+            liveDoseOpt: "تحسين الجرعة", liveDoseDesc: "رؤية التغيرات الفورية.",
+            fabricCond: "موصلية القماش", fabricCondDesc: "اكتشاف الشوائب فوراً.",
+            hotWashTrans: "الغسيل الساخن", hotWashDesc: "يمنع ترسب الألوان.",
+            rinseOpt: "تحسين الشطف", rinseDesc: "يثبت خلو القماش من المواد الكيميائية.",
+            trueLiquor: "الحجم الحقيقي", trueLiquorDesc: "المراقبة المستمرة للحجم.",
+            flashNews1: "📣 تحسين العمليات مستمر. تأكد من تركيب المستشعرات!", flashNews2: "🚀 الملح الذكي قريباً!!!",
+            edit: "تعديل", hide: "إخفاء", phExtraTotalLabel: "pH خسائر مخفية", saltExtraTotalLabel: "الموصلية والمعالجة",
+            phTotalLabel: "pH الربح", saltTotalLabel: "الموصلية الربح",
+            designedBy: "Designed & Powered by", saveClose: "حفظ",
+            copyrightText: "⚠️ سري للغاية ويمنع النشر © 2026 ELiAR ELEKTRONİK ⚠️"
+        },
+        hi: {
+            appTitle: "Eray उपकरण", home: "होम", settingsTab: "सेटिंग्स",
+            calcCategoryTitle: "गणना उपकरण", calcCategoryDesc: "कनवर्टर और सिम्युलेटर।",
+            nav_calcs: "कैलकुलेटर", nav_ph: "pH ROI", nav_ph_ex: "pH अतिरिक्त", nav_salt: "चालकता ROI", nav_salt_ex: "चालकता+", nav_report: "रिपोर्ट",
+            welcome: "", selectModule: "",
+            saltTitle: "चालकता कैलकुलेटर", saltDesc: "इकाई कनवर्टर।",
+            simTitle: "सिम्युलेटर", simDesc: "ग/ली खोज।",
+            roiTitle: "pH लाभ सिम्युलेटर", roiDesc: "समय और श्रम विश्लेषण।",
+            phExtraTitle: "pH अतिरिक्त", phExtraDesc: "पुनर्प्रसंस्करण में कमी।",
+            saltRoiTitle: "चालकता लाभ", saltRoiDesc: "स्वचालित खुराक।",
+            saltExtraTitle: "चालकता अतिरिक्त", saltExtraDesc: "उपचार बचत।",
+            reportTitle: "रिपोर्ट उदाहरण", reportSubtitle: "विश्लेषण", reportDesc: "डेमो स्क्रीन।",
+            settingsDesc: "डेटा प्रबंधित करें।", settingsInfo: "वैश्विक मान।",
+            clearAll: "साफ़ करें", liquidFactor: "तरल कारक",
+            ms: "चालकता", gl: "एकाग्रता", liq: "तरल", d: "घनत्व", be: "बौमे", w: "प्रतिशत",
+            simParams: "पैरामीटर", sim_kilo: "कपड़ा", sim_akBoyaOran: "अनुपात", sim_tuzLitresi: "तरल (L)", sim_boya: "रंग", otherChems: "रसायन", sim_soda1: "सोडा 1", sim_soda2: "सोडा 2", sim_alkali: "क्षार", sim_bikarbonat: "बाइकार्बोनेट", sim_kimyasal: "रसायन", sim_hafiza1: "मेमोरी 1", sim_altLimit: "न्यूनतम", sim_ustLimit: "अधिकतम", tuzBastan: "सिमुलेशन", boyaBastan: "रंग सिमुलेशन", expectedGL: "लक्ष्य", lowerLimit: "न्यूनतम", upperLimit: "अधिकतम", sensorShouldRead: "सेंसर रीडिंग",
+            totalGain: "कुल लाभ", manualSys: "मैनुअल", sensorSys: "सेंसर",
+            timeSpent: "समय व्यतीत", timeSaved: "समय की बचत", lostLabor: "श्रम हानि", lostEnergy: "ऊर्जा हानि",
+            laborSavings: "श्रम बचत", energySavings: "ऊर्जा बचत", capacityRev: "क्षमता", extraBatch: "बैच",
+            bizData: "व्यवसाय डेटा", measTime: "माप", condMeasTime: "चालकता समय", costs: "लागत",
+            machines: "मशीनें", batches: "बैच/दिन", days: "दिन", measPerBatch: "माप/बैच",
+            manTimeMin: "मैनुअल समय", senTimeSec: "सेंसर समय", successRate: "सफलता (%)",
+            opSalary: "वेतन", opMachines: "मशीन/ऑप", shifts: "शिफ्ट", shiftHours: "घंटे",
+            electricKw: "बिजली", electricPrice: "मूल्य", steamTon: "भाप", steamPrice: "भाप मूल्य",
+            fabricPerBatch: "कपड़ा/बैच", fabricPrice: "मूल्य",
+            daily: "दैनिक", monthly: "मासिक", yearly: "वार्षिक", u_pcs: "नग", u_day: "दिन", u_min: "मिनट", u_sec: "सेकंड", u_hour: "घंटे", u_kg: "किग्रा",
+            slogan: "स्मार्ट रंगाई यात्रा में सेंसर",
+            hiddenLossParams: "छिपे हुए नुकसान", condTreatmentParams: "उपचार पैरामीटर",
+            currentReprocess: "वर्तमान (%)", targetReprocess: "लक्ष्य (%)", costPerReprocess: "लागत",
+            steamWaste: "भाप हानि", saltPerBatch: "रसायन/बैच", treatmentCostPerKg: "उपचार लागत",
+            rftIncrease: "RFT वृद्धि", preventedReprocess: "पुनर्प्रसंस्करण रोका गया", savedBatches: "बैच बचाए गए।",
+            heatConservation: "ऊष्मा संरक्षण", waitHeatLoss: "ऊष्मा हानि", savedWaitHours: "घंटे बचाए गए।",
+            operatorWaited: "प्रतीक्षा:", treatmentLoad: "उपचार भार", preventedSaltDisposal: "रासायनिक निपटान रोका गया",
+            preventedSaltKgPre: "बचाया गया", preventedSaltKgPost: "किग्रा रसायन।",
+            softWaterAnomaly: "जल विसंगति", softWaterDesc: "शुरू होने से पहले राल की समस्या का पता लगाया गया।",
+            liveDoseOpt: "खुराक अनुकूलन", liveDoseDesc: "त्वरित pH वृद्धि दिखाई देती है।",
+            fabricCond: "कच्चे कपड़े की चालकता", fabricCondDesc: "कपास की अशुद्धियाँ तुरंत देखी जाती हैं।",
+            hotWashTrans: "गर्म धुलाई", hotWashDesc: "रंग वर्षा को रोकता है।",
+            rinseOpt: "कुल्ला अनुकूलन", rinseDesc: "रसायन मुक्त साबित होता है।",
+            trueLiquor: "सही मात्रा", trueLiquorDesc: "निरंतर लाइव निगरानी।",
+            flashNews1: "📣 प्रक्रिया अनुकूलन जारी है। सेंसर किट स्थापित करें!", flashNews2: "🚀 स्मार्ट साल्ट जल्द ही!!!",
+            edit: "संपादित करें", hide: "छिपाएं", phExtraTotalLabel: "pH छिपा हुआ नुकसान", saltExtraTotalLabel: "चालकता उपचार",
+            phTotalLabel: "pH लाभ", saltTotalLabel: "चालकता लाभ",
+            designedBy: "Designed & Powered by", saveClose: "सहेजें",
+            copyrightText: "⚠️ पूरी तरह से गोपनीय और वितरित न करें © 2026 ELiAR ELEKTRONİK ⚠️"
+        },
+        ur: {
+            appTitle: "Eray Toolkits", home: "ہوم", settingsTab: "ترتیبات",
+            calcCategoryTitle: "حسابی اوزار", calcCategoryDesc: "یونٹ کنورٹر اور کنٹرول سمیلیٹر۔",
+            nav_calcs: "کیلکولیٹر", nav_ph: "pH ROI", nav_ph_ex: "pH اضافی", nav_salt: "کنڈکٹیوٹی ROI", nav_salt_ex: "کنڈکٹیوٹی+", nav_report: "رپورٹ",
+            welcome: "", selectModule: "",
+            saltTitle: "کنڈکٹیوٹی کیلکولیٹر", saltDesc: "یونٹ کنورٹر۔",
+            simTitle: "کنڈکٹیوٹی سمیلیٹر", simDesc: "گ/لی تلاش۔",
+            roiTitle: "pH منافع سمیلیٹر", roiDesc: "وقت اور محنت کا تجزیہ۔",
+            phExtraTitle: "pH اضافی سمیلیٹر", phExtraDesc: "دوبارہ پروسیسنگ میں کمی۔",
+            saltRoiTitle: "کنڈکٹیوٹی منافع", saltRoiDesc: "خودکار خوراک۔",
+            saltExtraTitle: "کنڈکٹیوٹی اضافی", saltExtraDesc: "علاج کی بچت۔",
+            reportTitle: "رپورٹ کی مثال", reportSubtitle: "تجزیہ", reportDesc: "ڈیمو اسکرین۔",
+            settingsDesc: "ڈیٹا کا انتظام کریں۔", settingsInfo: "عالمی اقدار۔",
+            clearAll: "صاف کریں", liquidFactor: "مائع عنصر",
+            ms: "کنڈکٹیوٹی", gl: "توجہ", liq: "مائع", d: "کثافت", be: "بومے", w: "فیصد",
+            simParams: "پیرامیٹرز", sim_kilo: "کپڑا (کلو)", sim_akBoyaOran: "تناسب", sim_tuzLitresi: "مائع (L)", sim_boya: "رنگ (L)", otherChems: "کیمیکلز", sim_soda1: "سوڈا 1", sim_soda2: "سوڈا 2", sim_alkali: "الکالی", sim_bikarbonat: "بائک کاربونیٹ", sim_kimyasal: "کیمیکل", sim_hafiza1: "میموری 1", sim_altLimit: "کم از کم", sim_ustLimit: "زیادہ سے زیادہ", tuzBastan: "سمولیشن", boyaBastan: "رنگ سمولیشن", expectedGL: "ہدف", lowerLimit: "کم از کم", upperLimit: "زیادہ سے زیادہ", sensorShouldRead: "سینسر ریڈنگ",
+            totalGain: "کل منافع", manualSys: "دستی", sensorSys: "سینسر",
+            timeSpent: "وقت صرف ہوا", timeSaved: "وقت کی بچت", lostLabor: "محنت کا نقصان", lostEnergy: "توانائی کا نقصان",
+            laborSavings: "محنت کی بچت", energySavings: "توانائی کی بچت", capacityRev: "صلاحیت", extraBatch: "بیچز",
+            bizData: "کاروباری ڈیٹا", measTime: "پیمائش", condMeasTime: "کنڈکٹیوٹی کا وقت", costs: "اخراجات",
+            machines: "مشینیں", batches: "بیچ/دن", days: "دن", measPerBatch: "پیمائش/بیچ",
+            manTimeMin: "دستی وقت", senTimeSec: "سینسر کا وقت", successRate: "کامیابی (%)",
+            opSalary: "تنخواہ", opMachines: "مشین/آپریٹر", shifts: "شفٹیں", shiftHours: "گھنٹے",
+            electricKw: "بجلی", electricPrice: "قیمت", steamTon: "بھاپ", steamPrice: "بھاپ کی قیمت",
+            fabricPerBatch: "کپڑا/بیچ", fabricPrice: "قیمت",
+            daily: "روزانہ", monthly: "ماہانہ", yearly: "سالانہ", u_pcs: "عدد", u_day: "دن", u_min: "منٹ", u_sec: "سیکنڈ", u_hour: "گھنٹے", u_kg: "کلو",
+            slogan: "اسمارٹ ڈائینگ سفر میں سینسرز",
+            hiddenLossParams: "چھپے ہوئے نقصانات", condTreatmentParams: "علاج کے پیرامیٹرز",
+            currentReprocess: "موجودہ (%)", targetReprocess: "ہدف (%)", costPerReprocess: "لاگت",
+            steamWaste: "بھاپ کا نقصان", saltPerBatch: "کیمیکل/بیچ", treatmentCostPerKg: "علاج کی لاگت",
+            rftIncrease: "RFT اضافہ", preventedReprocess: "دوبارہ پروسیسنگ روکی گئی", savedBatches: "بیچز بچائے گئے۔",
+            heatConservation: "گرمی کا تحفظ", waitHeatLoss: "گرمی کا نقصان", savedWaitHours: "گھنٹے بچائے گئے۔",
+            operatorWaited: "انتظار:", treatmentLoad: "علاج کا بوجھ", preventedSaltDisposal: "کیمیائی تصرف روکا گیا",
+            preventedSaltKgPre: "بچایا گیا", preventedSaltKgPost: "کلو کیمیکل۔",
+            softWaterAnomaly: "پانی کی خرابی", softWaterDesc: "شروع ہونے سے پہلے رال کے مسائل کا پتہ چلا۔",
+            liveDoseOpt: "خوراک کی اصلاح", liveDoseDesc: "فوری pH اضافہ نظر آتا ہے۔",
+            fabricCond: "خام کپڑے کی کنڈکٹیوٹی", fabricCondDesc: "کپاس کی نجاست فوری طور پر دیکھی جاتی ہے۔",
+            hotWashTrans: "گرم واش", hotWashDesc: "رنگ کی بارش کو روکتا ہے۔",
+            rinseOpt: "کللا اصلاح", rinseDesc: "کیمیکل سے پاک ثابت ہوتا ہے۔",
+            trueLiquor: "صحیح حجم", trueLiquorDesc: "مسلسل لائیو نگرانی۔",
+            flashNews1: "📣 عمل کی اصلاح جاری ہے۔ سینسر کٹ انسٹال کریں!", flashNews2: "🚀 اسمارٹ سالٹ جلد آ رہا ہے!!!",
+            edit: "ترمیم کریں", hide: "چھپائیں", phExtraTotalLabel: "pH چھپے ہوئے نقصانات", saltExtraTotalLabel: "کنڈکٹیوٹی علاج",
+            phTotalLabel: "pH منافع", saltTotalLabel: "کنڈکٹیوٹی منافع",
+            designedBy: "Designed & Powered by", saveClose: "محفوظ کریں",
+            copyrightText: "⚠️ سختی سے خفیہ اور تقسیم نہ کریں © 2026 ELiAR ELEKTRONİK ⚠️"
+        },
+        bn: {
+            appTitle: "Eray Toolkits", home: "হোম", settingsTab: "সেটিংস",
+            calcCategoryTitle: "গণনা সরঞ্জাম", calcCategoryDesc: "রূপান্তরকারী এবং সিমুলেটর।",
+            nav_calcs: "ক্যালকুলেটর", nav_ph: "pH ROI", nav_ph_ex: "pH অতিরিক্ত", nav_salt: "পরিবাহিতা ROI", nav_salt_ex: "পরিবাহিতা+", nav_report: "রিপোর্ট",
+            welcome: "", selectModule: "",
+            saltTitle: "পরিবাহিতা ক্যালকুলেটর", saltDesc: "ইউনিট রূপান্তরকারী।",
+            simTitle: "সিমুলেটর", simDesc: "g/L সনাক্তকরণ।",
+            roiTitle: "pH লাভ সিমুলেটর", roiDesc: "সময় এবং শ্রম বিশ্লেষণ।",
+            phExtraTitle: "pH অতিরিক্ত", phExtraDesc: "পুনরায় প্রক্রিয়াকরণ হ্রাস।",
+            saltRoiTitle: "পরিবাহিতা লাভ", saltRoiDesc: "স্বয়ংক্রিয় ডোজিং।",
+            saltExtraTitle: "পরিবাহিতা অতিরিক্ত", saltExtraDesc: "চিকিত্সা সঞ্চয়।",
+            reportTitle: "রিপোর্ট উদাহরণ", reportSubtitle: "বিশ্লেষণ", reportDesc: "ডেমো স্ক্রিন।",
+            settingsDesc: "ডেটা পরিচালনা করুন।", settingsInfo: "গ্লোবাল মান।",
+            clearAll: "পরিষ্কার করুন", liquidFactor: "তরল ফ্যাক্টর",
+            ms: "পরিবাহিতা", gl: "একাগ্রতা", liq: "তরল", d: "ঘনত্ব", be: "বাউমে", w: "শতাংশ",
+            simParams: "পরামিতি", sim_kilo: "ফ্যাব্রিক (কেজি)", sim_akBoyaOran: "অনুপাত", sim_tuzLitresi: "তরল (L)", sim_boya: "রং (L)", otherChems: "রাসায়নিক", sim_soda1: "সোডা 1", sim_soda2: "সোডা 2", sim_alkali: "ক্ষার", sim_bikarbonat: "বাইকার্বনেট", sim_kimyasal: "রাসায়নিক", sim_hafiza1: "মেমরি 1", sim_altLimit: "সর্বনিম্ন", sim_ustLimit: "সর্বোচ্চ", tuzBastan: "সিমুলেশন", boyaBastan: "রং সিমুলেশন", expectedGL: "লক্ষ্য", lowerLimit: "সর্বনিম্ন", upperLimit: "সর্বোচ্চ", sensorShouldRead: "সেন্সর রিডিং",
+            totalGain: "মোট লাভ", manualSys: "ম্যানুয়াল", sensorSys: "সেন্সর",
+            timeSpent: "সময় ব্যয়", timeSaved: "সময় সাশ্রয়", lostLabor: "শ্রম ক্ষতি", lostEnergy: "শক্তির ক্ষতি",
+            laborSavings: "শ্রম সাশ্রয়", energySavings: "শক্তি সাশ্রয়", capacityRev: "ক্ষমতা", extraBatch: "ব্যাচ",
+            bizData: "ব্যবসা ডেটা", measTime: "পরিমাপ", condMeasTime: "পরিবাহিতা সময়", costs: "খরচ",
+            machines: "মেশিন", batches: "ব্যাচ/দিন", days: "দিন", measPerBatch: "পরিমাপ/ব্যাচ",
+            manTimeMin: "ম্যানুয়াল সময়", senTimeSec: "সেন্সর সময়", successRate: "সাফল্য (%)",
+            opSalary: "বেতন", opMachines: "মেশিন/অপারেটর", shifts: "শিফট", shiftHours: "ঘন্টা",
+            electricKw: "বিদ্যুৎ", electricPrice: "মূল্য", steamTon: "বাষ্প", steamPrice: "বাষ্প মূল্য",
+            fabricPerBatch: "ফ্যাব্রিক/ব্যাচ", fabricPrice: "মূল্য",
+            daily: "দৈনিক", monthly: "মাসিক", yearly: "বার্ষিক", u_pcs: "পিস", u_day: "দিন", u_min: "মিনিট", u_sec: "সেকেন্ড", u_hour: "ঘন্টা", u_kg: "কেজি",
+            slogan: "স্মার্ট ডাইং যাত্রায় সেন্সর",
+            hiddenLossParams: "লুকানো ক্ষতি", condTreatmentParams: "চিকিত্সা পরামিতি",
+            currentReprocess: "বর্তমান (%)", targetReprocess: "লক্ষ্য (%)", costPerReprocess: "খরচ",
+            steamWaste: "বাষ্প ক্ষতি", saltPerBatch: "রাসায়নিক/ব্যাচ", treatmentCostPerKg: "চিকিত্সার খরচ",
+            rftIncrease: "RFT বৃদ্ধি", preventedReprocess: "পুনরায় প্রক্রিয়াকরণ প্রতিরোধ", savedBatches: "ব্যাচ সংরক্ষিত।",
+            heatConservation: "তাপ সংরক্ষণ", waitHeatLoss: "তাপ ক্ষতি", savedWaitHours: "ঘন্টা সংরক্ষিত।",
+            operatorWaited: "অপেক্ষা:", treatmentLoad: "চিকিত্সার ভার", preventedSaltDisposal: "রাসায়নিক নিষ্পত্তি প্রতিরোধ",
+            preventedSaltKgPre: "সংরক্ষিত", preventedSaltKgPost: "কেজি রাসায়নিক।",
+            softWaterAnomaly: "জল অসঙ্গতি", softWaterDesc: "শুরু করার আগে রজন সমস্যা সনাক্ত করা হয়েছে।",
+            liveDoseOpt: "ডোজ অপ্টিমাইজেশান", liveDoseDesc: "দ্রুত pH বৃদ্ধি দৃশ্যমান।",
+            fabricCond: "ফ্যাব্রিক পরিবাহিতা", fabricCondDesc: "তুলার অমেধ্য অবিলম্বে লক্ষ্য করা যায়।",
+            hotWashTrans: "গরম ধোয়া", hotWashDesc: "রঙের বৃষ্টিপাত রোধ করে।",
+            rinseOpt: "ধুয়ে ফেলা অপ্টিমাইজেশান", rinseDesc: "রাসায়নিক মুক্ত প্রমাণ করে।",
+            trueLiquor: "সঠিক ভলিউম", trueLiquorDesc: "ক্রমাগত লাইভ মনিটরিং।",
+            flashNews1: "📣 প্রক্রিয়া অপ্টিমাইজেশান অব্যাহত রয়েছে। সেন্সর কিট ইনস্টল করুন!", flashNews2: "🚀 স্মার্ট সল্ট শীঘ্রই আসছে!!!",
+            edit: "সম্পাদনা করুন", hide: "লুকান", phExtraTotalLabel: "pH লুকানো ক্ষতি", saltExtraTotalLabel: "পরিবাহিতা চিকিত্সা",
+            phTotalLabel: "pH লাভ", saltTotalLabel: "পরিবাহিতা লাভ",
+            designedBy: "Designed & Powered by", saveClose: "সংরক্ষণ করুন",
+            copyrightText: "⚠️ কঠোরভাবে গোপনীয় এবং বিতরণ করবেন না © 2026 ELiAR ELEKTRONİK ⚠️"
+        },
+        uz: {
+            appTitle: "Eray Asboblari", home: "Asosiy", settingsTab: "Sozlamalar",
+            calcCategoryTitle: "Hisoblash vositalari", calcCategoryDesc: "Konvertor va simulyator.",
+            nav_calcs: "Hisoblash", nav_ph: "pH ROI", nav_ph_ex: "pH Ekstra", nav_salt: "O'tkazuvchanlik ROI", nav_salt_ex: "O'tkaz. Ekstra", nav_report: "Hisobot",
+            welcome: "", selectModule: "",
+            saltTitle: "O'tkazuvchanlik kalkulyatori", saltDesc: "Birlik konvertori.",
+            simTitle: "Simulyator", simDesc: "g/L aniqlash.",
+            roiTitle: "pH Foyda simulyatori", roiDesc: "Vaqt va mehnat tahlili.",
+            phExtraTitle: "pH Ekstra", phExtraDesc: "Qayta ishlashni kamaytirish.",
+            saltRoiTitle: "O'tkazuvchanlik foydasi", saltRoiDesc: "Avtomatik dozalash.",
+            saltExtraTitle: "O'tkazuvchanlik Ekstra", saltExtraDesc: "Tozalash tejamkorligi.",
+            reportTitle: "Hisobot namunasi", reportSubtitle: "Tahlil", reportDesc: "Demo ekran.",
+            settingsDesc: "Ma'lumotlarni boshqarish.", settingsInfo: "Global qiymatlar.",
+            clearAll: "Tozalash", liquidFactor: "Suyuqlik faktori",
+            ms: "O'tkazuvchanlik", gl: "Konsentratsiya", liq: "Suyuqlik", d: "Zichlik", be: "Bome", w: "Foiz",
+            simParams: "Parametrlar", sim_kilo: "Mato (kg)", sim_akBoyaOran: "Nisbat", sim_tuzLitresi: "Suyuqlik (L)", sim_boya: "Bo'yoq (L)", otherChems: "Kimyoviy", sim_soda1: "Soda 1", sim_soda2: "Soda 2", sim_alkali: "Ishqor", sim_bikarbonat: "Bikarbonat", sim_kimyasal: "Kimyoviy", sim_hafiza1: "Xotira 1", sim_altLimit: "Minimal", sim_ustLimit: "Maksimal", tuzBastan: "Simulyatsiya", boyaBastan: "Bo'yoq simulyatsiyasi", expectedGL: "Maqsad", lowerLimit: "Minimal", upperLimit: "Maksimal", sensorShouldRead: "Sensor o'qishi",
+            totalGain: "Umumiy foyda", manualSys: "Qo'lda", sensorSys: "Sensor",
+            timeSpent: "Sarf qilingan vaqt", timeSaved: "Tejalgan vaqt", lostLabor: "Mehnat yo'qotilishi", lostEnergy: "Energiya yo'qotilishi",
+            laborSavings: "Mehnat tejamkorligi", energySavings: "Energiya tejamkorligi", capacityRev: "Imkoniyat", extraBatch: "Partiyalar",
+            bizData: "Biznes ma'lumotlari", measTime: "O'lchov", condMeasTime: "O'tkazuvchanlik vaqti", costs: "Xarajatlar",
+            machines: "Mashinalar", batches: "Partiya/kun", days: "Kunlar", measPerBatch: "O'lchov/Partiya",
+            manTimeMin: "Qo'lda vaqt", senTimeSec: "Sensor vaqti", successRate: "Muvaffaqiyat (%)",
+            opSalary: "Maosh", opMachines: "Mashina/Op", shifts: "Smenalar", shiftHours: "Soatlar",
+            electricKw: "Elektr", electricPrice: "Narx", steamTon: "Bug'", steamPrice: "Bug' narxi",
+            fabricPerBatch: "Mato/Partiya", fabricPrice: "Narx",
+            daily: "Kunlik", monthly: "Oylik", yearly: "Yillik", u_pcs: "Dona", u_day: "Kun", u_min: "Daqiqa", u_sec: "Soniya", u_hour: "Soat", u_kg: "Kg",
+            slogan: "Aqlli bo'yash sayohatida datchiklar",
+            hiddenLossParams: "Yashirin yo'qotishlar", condTreatmentParams: "Tozalash parametrlari",
+            currentReprocess: "Joriy (%)", targetReprocess: "Maqsad (%)", costPerReprocess: "Xarajat",
+            steamWaste: "Bug' yo'qotilishi", saltPerBatch: "Kimyoviy/Partiya", treatmentCostPerKg: "Tozalash xarajati",
+            rftIncrease: "RFT OSHISHI", preventedReprocess: "Qayta ishlash oldi olindi", savedBatches: "Partiyalar saqlandi.",
+            heatConservation: "ISSIQLIKNI SAQLASH", waitHeatLoss: "Issiqlik yo'qotilishi", savedWaitHours: "soat saqlandi.",
+            operatorWaited: "Kutish:", treatmentLoad: "TOZALASH YUKI", preventedSaltDisposal: "Kimyoviy chiqindi oldi olindi",
+            preventedSaltKgPre: "Saqlangan", preventedSaltKgPost: "kg kimyoviy.",
+            softWaterAnomaly: "Suv anomaliyasi", softWaterDesc: "Boshlashdan oldin qatronlar muammosi aniqlandi.",
+            liveDoseOpt: "Dozani optimallashtirish", liveDoseDesc: "Tez pH o'sishi ko'rinadi.",
+            fabricCond: "Mato o'tkazuvchanligi", fabricCondDesc: "Paxta aralashmalari darhol seziladi.",
+            hotWashTrans: "Issiq yuvish", hotWashDesc: "Rang yog'ishini oldini oladi.",
+            rinseOpt: "Chayishni optimallashtirish", rinseDesc: "Kimyoviy moddalarsiz ekanligini isbotlaydi.",
+            trueLiquor: "Haqiqiy hajm", trueLiquorDesc: "Doimiy jonli monitoring.",
+            flashNews1: "📣 Jarayonni optimallashtirish davom etmoqda. Sensor to'plamini o'rnating!", flashNews2: "🚀 AQLLI TUZ TEZ ORADA!!!",
+            edit: "Tahrirlash", hide: "Yashirish", phExtraTotalLabel: "pH Yashirin yo'qotishlar", saltExtraTotalLabel: "O'tkazuvchanlik va Tozalash",
+            phTotalLabel: "pH Foyda", saltTotalLabel: "O'tkazuvchanlik foydasi",
+            designedBy: "Designed & Powered by", saveClose: "Saqlash",
+            copyrightText: "⚠️ QAT'IY MAXFIY VA TARQATILMASIN © 2026 ELiAR ELEKTRONİK ⚠️"
         }
-        // Diğer diller için fallback mekanizması çalışacak. (Anahtar kelimeler TR veya EN sözlüğünden çekilecek).
     };
 
     const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue;
@@ -923,7 +1335,6 @@
             const isPhExtraParamsOpen = ref(false);
             const isSaltExtraParamsOpen = ref(false);
             
-            // GÜÇLÜ FALLBACK: Seçilen dilde yoksa EN'ye bak, o da yoksa TR'ye bak, o da yoksa key'i bas.
             const t = (key) => {
                 if (translations[lang.value] && translations[lang.value][key]) return translations[lang.value][key];
                 if (translations['en'] && translations['en'][key]) return translations['en'][key];
@@ -999,7 +1410,6 @@
                 return Number(num).toLocaleString('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
             };
 
-            // ================= NAVİGASYON =================
             const goBack = () => {
                 if (activeTab.value === 'salt' || activeTab.value === 'simulator') {
                     activeTab.value = 'calculators'; 
@@ -1008,13 +1418,11 @@
                 }
             };
 
-            // ================= AYARLAR =================
             const globalInputs = reactive({
                 machines: 10, batches: 3, days: 26, shifts: 3, shiftHours: 8, fabricPerBatch: 750,
                 opSalary: 2200, opMachines: 3, electricKw: 30, electricPrice: 0.10, steamTon: 0.5, steamPrice: 25, fabricPrice: 10
             });
 
-            // ================= İLETKENLİK BİRİM HESAPLAYICI =================
             const fullSaltData = [{"w":1.0,"d":1.004,"gl":10.04,"ms":17.60,"be":0.60},{"w":2.0,"d":1.011,"gl":20.22,"ms":33.10,"be":1.60},{"w":3.0,"d":1.018,"gl":30.54,"ms":48.60,"be":2.60},{"w":4.0,"d":1.025,"gl":41.01,"ms":63.45,"be":3.60},{"w":5.0,"d":1.032,"gl":51.61,"ms":78.30,"be":4.55},{"w":6.0,"d":1.039,"gl":62.37,"ms":91.27,"be":5.50},{"w":7.0,"d":1.047,"gl":73.27,"ms":104.24,"be":6.45},{"w":8.0,"d":1.054,"gl":84.31,"ms":117.20,"be":7.40},{"w":9.0,"d":1.061,"gl":95.51,"ms":130.20,"be":8.32},{"w":10.0,"d":1.069,"gl":106.86,"ms":143.20,"be":9.25},{"w":11.0,"d":1.076,"gl":118.37,"ms":154.15,"be":10.18},{"w":12.0,"d":1.084,"gl":130.03,"ms":165.10,"be":11.10},{"w":13.0,"d":1.091,"gl":141.84,"ms":174.97,"be":12.00},{"w":14.0,"d":1.099,"gl":153.82,"ms":184.83,"be":12.90},{"w":15.0,"d":1.106,"gl":165.96,"ms":194.70,"be":13.80},{"w":16.0,"d":1.114,"gl":178.25,"ms":202.60,"be":14.70},{"w":17.0,"d":1.122,"gl":190.71,"ms":210.50,"be":15.60},{"w":18.0,"d":1.130,"gl":203.34,"ms":217.27,"be":16.50},{"w":19.0,"d":1.138,"gl":216.14,"ms":224.03,"be":17.40},{"w":20.0,"d":1.145,"gl":229.10,"ms":230.80,"be":18.30},{"w":21.0,"d":1.153,"gl":242.23,"ms":235.80,"be":19.15},{"w":22.0,"d":1.162,"gl":255.54,"ms":240.80,"be":20.00},{"w":23.0,"d":1.170,"gl":269.02,"ms":245.80,"be":20.85},{"w":24.0,"d":1.178,"gl":282.67,"ms":250.80,"be":21.70},{"w":25.0,"d":1.186,"gl":296.50,"ms":253.70,"be":22.60},{"w":26.0,"d":1.194,"gl":310.51,"ms":256.50,"be":23.40}];
             
             const interpolateValue = (val, fromKey, toKey) => {
@@ -1066,7 +1474,6 @@
             const updateFactor = () => { if (saltValues.gl) calcSalt('gl'); };
             const resetSalt = () => { Object.keys(saltValues).forEach(k => saltValues[k] = ''); saltActive.value = null; };
 
-            // ================= TUZ KONTROL SİMÜLATÖRÜ =================
             const simInputs = reactive({
                 kilo: 750, akBoyaOran: 7, tuzLitresi: 300, boya: 0,
                 soda1: 0, soda2: 0, alkali: 0, bikarbonat: 0, kimyasal: 0,
@@ -1096,7 +1503,6 @@
                 };
             });
 
-            // ================= ORTAK KAZANÇ (ROI) HESAPLAMA =================
             const calcRoi = (localInputs) => {
                 const i = { ...globalInputs, ...localInputs };
 
@@ -1126,17 +1532,14 @@
                 };
             };
 
-            // PH KAZANÇ MODÜLÜ
             const phPeriod = ref('monthly');
             const phLocalInputs = reactive({ measPerBatch: 6, manTimeMin: 4, senTimeSec: 40, successRate: 100 });
             const phResults = computed(() => calcRoi(phLocalInputs)[phPeriod.value]);
 
-            // İLETKENLİK KAZANÇ MODÜLÜ
             const saltRoiPeriod = ref('monthly');
             const saltLocalInputs = reactive({ measPerBatch: 3, manTimeMin: 5, senTimeSec: 30, successRate: 100 });
             const saltRoiResults = computed(() => calcRoi(saltLocalInputs)[saltRoiPeriod.value]);
 
-            // ================= pH EK KAZANÇ MODÜLÜ =================
             const phExtraPeriod = ref('monthly');
             const phExtraInputs = reactive({ currentReprocess: 8, targetReprocess: 3, costPerReprocess: 150, steamWaste: 0.3 });
             
@@ -1160,7 +1563,6 @@
                 return { preventedBatches, reprocessSavings, totalWaitHours, steamSavings, totalExtraSavings: reprocessSavings + steamSavings };
             });
 
-            // ================= İLETKENLİK EK KAZANÇ MODÜLÜ =================
             const saltExtraPeriod = ref('monthly');
             const saltExtraInputs = reactive({ currentReprocess: 8, targetReprocess: 3, costPerReprocess: 150, saltPerBatch: 450, treatmentCostPerKg: 0.8 });
             
@@ -1183,7 +1585,6 @@
                 return { preventedBatches, reprocessSavings, preventedSaltKg, treatmentSavings, totalExtraSavings: reprocessSavings + treatmentSavings };
             });
 
-            // ================= ÖRNEK RAPOR MODÜLÜ =================
             const reportTab = ref('ph');
             let phPieChartInstance = null;
             let phBarChartInstance = null;
@@ -1220,20 +1621,20 @@
 
             const toggleTheme = () => {
                 isDark.value = !isDark.value;
-                if(isDark.value) document.documentElement.classList.add('dark');
-                else document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+                if(isDark.value) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                }
             };
 
             onMounted(() => {
                 fetchRates(); 
-                const saved = localStorage.getItem('theme');
-                if (saved === 'light') {
-                    isDark.value = false;
-                    document.documentElement.classList.remove('dark');
-                } else {
-                    document.documentElement.classList.add('dark');
-                }
+                document.documentElement.classList.add('dark');
+                isDark.value = true;
+                localStorage.setItem('theme', 'dark');
             });
 
             return {
