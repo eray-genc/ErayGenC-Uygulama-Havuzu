@@ -34,9 +34,21 @@
         .slide-fade-enter-active { transition: all 0.3s ease-out; }
         .slide-fade-leave-active { transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1); }
         .slide-fade-enter-from, .slide-fade-leave-to { transform: translateY(-10px); opacity: 0; }
+        
+        /* Ticker Animasyonları */
         @keyframes tickerScroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        
+        /* ⬇️ HIZ AYARI: Üst döviz kurları bandı hızı (Süre arttıkça yavaşlar - Örn: 25s'den 40s'ye) ⬇️ */
         .ticker-text { display: inline-block; white-space: nowrap; animation: tickerScroll 25s linear infinite; }
         .ticker-wrapper:hover .ticker-text { animation-play-state: paused; }
+        
+        @keyframes flashScroll { 0% { transform: translateX(100vw); } 100% { transform: translateX(-180%); } }
+        
+        /* ⬇️ HIZ AYARI: Alt Flash/Son Dakika bandı hızı (45s olarak yavaşlatıldı. Süre arttıkça daha da yavaşlar) ⬇️ */
+        .flash-text { display: inline-block; white-space: nowrap; padding-left: 20px; animation: flashScroll 45s linear infinite; }
+        .flash-wrapper:hover .flash-text { animation-play-state: paused; }
+
+        .eliar-logo-text { font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: -0.06em; }
     </style>
 </head>
 <body class="antialiased bg-gray-50 dark:bg-[#020420] text-slate-800 dark:text-slate-200 transition-colors duration-300">
@@ -68,13 +80,23 @@
                 </div>
             </div>
             
-            <div class="flex items-center gap-1.5 sm:gap-2">
+            <div class="flex items-center gap-1 sm:gap-2">
                 <div :title="ratesLoaded ? 'Kurlar Guncel' : 'Kurlar Yukleniyor'" class="hidden sm:block w-2 h-2 rounded-full" :class="ratesLoaded ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-brand-warning animate-pulse'"></div>
-                <select v-model="currency" @change="changeCurrency" class="bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-xs font-bold py-1.5 px-1 sm:px-2 rounded-lg outline-none cursor-pointer border border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
+                <select v-model="currency" @change="changeCurrency" class="bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-xs font-bold py-1.5 px-1 rounded-lg outline-none cursor-pointer border border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
                     <option value="USD">$ USD</option><option value="EUR">€ EUR</option><option value="TRY">₺ TRY</option>
                 </select>
-                <select v-model="lang" class="bg-gray-100 dark:bg-slate-800 text-xs font-bold py-1.5 px-1 sm:px-2 rounded-lg outline-none cursor-pointer border border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
-                    <option value="tr">🇹🇷 TR</option><option value="en">🇬🇧 EN</option><option value="pt">🇵🇹 PT</option><option value="de">🇩🇪 DE</option>
+                
+                <select v-model="lang" class="bg-gray-100 dark:bg-slate-800 text-xs font-bold py-1.5 px-1 rounded-lg outline-none cursor-pointer border border-gray-200 dark:border-slate-700 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors max-w-[65px] sm:max-w-[100px]">
+                    <option value="tr">🇹🇷 TR</option>
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="de">🇩🇪 DE</option>
+                    <option value="pt">🇵🇹 PT</option>
+                    <option value="ru">🇷🇺 RU</option>
+                    <option value="ar">🇪🇬 AR</option>
+                    <option value="hi">🇮🇳 HI</option>
+                    <option value="ur">🇵🇰 UR</option>
+                    <option value="bn">🇧🇩 BN</option>
+                    <option value="uz">🇺🇿 UZ</option>
                 </select>
                 <button @click="toggleTheme" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-gray-600 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-700 transition-all">
                     <i :class="isDark ? 'ri-moon-clear-fill' : 'ri-sun-fill'" class="text-lg"></i>
@@ -134,7 +156,7 @@
             </div>
         </transition>
 
-        <div class="flex-1 overflow-y-auto custom-scroll relative bg-gray-50/50 dark:bg-slate-900/20 pb-32 flex flex-col">
+        <div class="flex-1 overflow-y-auto custom-scroll relative bg-gray-50/50 dark:bg-slate-900/20 pb-40 flex flex-col">
             
             <div v-show="activeTab === 'home'" class="p-6 flex-1 flex flex-col items-center justify-center gap-6 relative">
                 
@@ -175,7 +197,7 @@
 
                     <button @click="openReportTab" class="group col-span-2 sm:col-span-2 relative overflow-hidden bg-gradient-to-br from-brand-purple to-indigo-900 rounded-3xl p-4 border border-brand-purple/50 shadow-xl hover:shadow-brand-purple/20 text-center flex flex-col items-center gap-3 transition-all">
                         <div class="w-12 h-12 rounded-2xl bg-white/20 text-white flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-file-chart-fill text-2xl"></i></div>
-                        <div><h3 class="font-bold text-sm text-white mb-1">{{ t('reportTitle') }}</h3><p class="text-[10px] text-indigo-200">{{ t('reportDesc') }}</p></div>
+                        <div><h3 class="font-bold text-sm text-white mb-1">{{ t('reportTitle') }}</h3></div>
                     </button>
                 </div>
                 
@@ -192,7 +214,7 @@
                         <i class="ri-calculator-fill text-5xl"></i>
                     </div>
                     <h2 class="text-2xl font-brand font-bold text-gray-800 dark:text-white mb-1">{{ t('calcCategoryTitle') }}</h2>
-                    <p class="text-sm text-gray-500 dark:text-slate-400">Kullanmak istediğiniz aracı seçin</p>
+                    <p class="text-sm text-gray-500 dark:text-slate-400">{{ t('calcCategoryDesc') }}</p>
                 </div>
 
                 <div class="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-4 z-10 mb-auto">
@@ -668,15 +690,31 @@
         </div>
 
         <div class="absolute bottom-0 left-0 w-full z-50 flex flex-col">
-            <div class="w-full bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-xl border-t border-gray-200 dark:border-slate-800 pt-2 px-1 sm:px-2 pb-2 flex justify-between items-center gap-1 overflow-x-auto custom-scroll">
+            
+            <div class="w-full bg-black text-white text-[10px] sm:text-xs font-bold py-1.5 flex items-center overflow-hidden relative shadow-[0_-5px_20px_rgba(0,0,0,0.5)] border-t border-gray-800">
+                
+                <div class="absolute left-0 top-0 bottom-0 bg-red-700 px-3 flex items-center justify-center z-20 border-r border-red-500 shadow-[4px_0_10px_rgba(0,0,0,0.4)]">
+                    <i class="ri-megaphone-fill animate-pulse text-yellow-300 text-sm sm:text-base mr-1.5"></i>
+                    <span class="animate-pulse tracking-wider">NEW!</span>
+                </div>
+                
+                <div class="flash-wrapper w-full overflow-hidden pl-24">
+                    <div class="flash-text font-bold tracking-wide">
+                        <span class="mr-16">📣 Proses Optimizasyonuna Yönelik çalışmalarımız tüm hızıyla devam etmekte. Sensör Kitinizin boya makinelerinizde eksiksiz kurulu olduğundan emin olun!</span>
+                        <span class="mr-16 text-yellow-300">🚀 AKILLI TUZ İSTEĞİ ÇOK YAKINDA!!!</span>
+                        <span class="mr-16">📣 Proses Optimizasyonuna Yönelik çalışmalarımız tüm hızıyla devam etmekte. Sensör Kitinizin boya makinelerinizde eksiksiz kurulu olduğundan emin olun!</span>
+                        <span class="mr-16 text-yellow-300">🚀 AKILLI TUZ İSTEĞİ ÇOK YAKINDA!!!</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-xl border-t border-gray-200 dark:border-slate-800 pt-2 px-1 sm:px-2 pb-2 flex justify-between items-center gap-1 overflow-x-auto custom-scroll pb-safe">
                 <button @click="activeTab = 'home'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'home' ? 'text-gray-900 dark:text-white' : 'text-gray-400'">
                     <i class="ri-home-smile-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('home') }}</span>
                 </button>
-                
                 <button @click="activeTab = 'calculators'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="['salt', 'simulator', 'calculators'].includes(activeTab) ? 'text-indigo-500' : 'text-gray-400'">
                     <i class="ri-calculator-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_calcs') }}</span>
                 </button>
-                
                 <button @click="activeTab = 'ph_roi'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'ph_roi' ? 'text-brand-secondary' : 'text-gray-400'">
                     <i class="ri-line-chart-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_ph') }}</span>
                 </button>
@@ -780,62 +818,12 @@
             daily: "Daily", monthly: "Monthly", yearly: "Yearly",
             u_pcs: "Pcs", u_day: "Day", u_min: "Min", u_sec: "Sec", u_hour: "Hour"
         },
-        pt: {
-            appTitle: "ELiAR App", home: "Início", settingsTab: "Config",
-            calcCategoryTitle: "Ferramentas de Cálculo", calcCategoryDesc: "Conversor de unidades e simulador.",
-            nav_calcs: "Cálculos", nav_ph: "ROI pH", nav_ph_ex: "pH Extra", nav_salt: "ROI Sal", nav_salt_ex: "Sal Extra", nav_report: "Relatório",
-            welcome: "Bem-vindo", selectModule: "Selecione um módulo.",
-            saltTitle: "Calculadora de Condutividade", saltDesc: "Condutividade, Concentração, Baumé e Sal Líquido.",
-            simTitle: "Simulador Controle de Sal", simDesc: "Detecção real de g/L via fórmula de saldo.",
-            roiTitle: "Simulador de Lucro pH", roiDesc: "Análise de tempo, trabalho, energia e capacidade.",
-            phExtraTitle: "Simulador Lucro Extra pH", phExtraDesc: "Redução de reprocesso e economia de vapor.",
-            saltRoiTitle: "Simulador de Lucro Condutividade", saltRoiDesc: "ROI de medição e dosagem automática de sal.",
-            saltExtraTitle: "Simulador Lucro Extra Sal", saltExtraDesc: "Economia de tratamento e otimização avançada.",
-            reportTitle: "Exemplo de Relatório", reportDesc: "Tela de análise baseada em dados reais.",
-            settingsDesc: "Gerenciar dados de negócios e custos.", settingsInfo: "Valores usados globalmente.",
-            clearAll: "Limpar Tudo", liquidFactor: "Fator Sal Líquido",
-            ms: "Condutividade", gl: "Concentração", liq: "Sal Líquido", d: "Densidade", be: "Baumé", w: "Porcentagem",
-            simParams: "Parâmetros de Receita", sim_kilo: "Tecido (kg)", sim_akBoyaOran: "Relação Banho", sim_tuzLitresi: "Sal Líquido (L)", sim_boya: "Corante (L)", otherChems: "Químicos", sim_soda1: "Soda 1", sim_soda2: "Soda 2", sim_alkali: "Álcali", sim_bikarbonat: "Bicarbonato", sim_kimyasal: "Químico", sim_hafiza1: "Memória 1", sim_altLimit: "Lim. Inf", sim_ustLimit: "Lim. Sup", tuzBastan: "Sal Primeiro", boyaBastan: "Corante Primeiro", expectedGL: "Concentração Alvo", lowerLimit: "Limite Inf.", upperLimit: "Limite Sup.", sensorShouldRead: "Sensor deve ler",
-            totalGain: "Ganho Extra Total", manualSys: "Sistema Manual", sensorSys: "Sensor (Ganho)",
-            timeSpent: "Tempo Gasto", timeSaved: "Tempo Economizado", lostLabor: "Trabalho Perdido", lostEnergy: "Energia Perdida",
-            laborSavings: "Econ. Trabalho", energySavings: "Econ. Energia", capacityRev: "Capacidade & Receita", extraBatch: "Lotes",
-            bizData: "Dados Empresa", measTime: "Medição", costs: "Custos",
-            machines: "Máquinas", batches: "Lotes (Diário)", days: "Dias Úteis", measPerBatch: "Medição p/ Lote",
-            manTimeMin: "Tempo Manual", senTimeSec: "Tempo Sensor", successRate: "Taxa Sucesso",
-            opSalary: "Custo Operador", opMachines: "Máqs/Op.", shifts: "Turnos", shiftHours: "Horas/Turno",
-            electricKw: "Eletricidade Máq", electricPrice: "Preço Elétrico", steamTon: "Vapor Máq", steamPrice: "Preço Vapor",
-            fabricPerBatch: "Tecido p/ Lote", fabricPrice: "Preço Venda",
-            daily: "Diário", monthly: "Mensal", yearly: "Anual",
-            u_pcs: "Unid", u_day: "Dia", u_min: "Min", u_sec: "Seg", u_hour: "Hora"
-        },
-        de: {
-            appTitle: "ELiAR App", home: "Start", settingsTab: "Einst.",
-            calcCategoryTitle: "Berechnungstools", calcCategoryDesc: "Einheitenumrechner und Simulator.",
-            nav_calcs: "Rechner", nav_ph: "pH ROI", nav_ph_ex: "pH Extra", nav_salt: "Salz ROI", nav_salt_ex: "Salz Extra", nav_report: "Bericht",
-            welcome: "Willkommen", selectModule: "Bitte wählen Sie ein Modul.",
-            saltTitle: "Leitfähigkeitsrechner", saltDesc: "Leitfähigkeit, Konzentration, Baumé und Flüssigsalz.",
-            simTitle: "Salzkontrollsimulator", simDesc: "Echte g/L Erkennung über Massenbilanz.",
-            roiTitle: "pH Gewinn Simulator", roiDesc: "Zeit-, Arbeits-, Energie- und Kapazitätsanalyse.",
-            phExtraTitle: "pH Extra Gewinn Simulator", phExtraDesc: "Reprozessreduzierung und Dampfeinsparung.",
-            saltRoiTitle: "Leitfähigkeit (Salz) Gewinn Simulator", saltRoiDesc: "ROI für automatische Salzdosierung.",
-            saltExtraTitle: "Salz Extra Gewinn Simulator", saltExtraDesc: "Behandlungseinsparungen und erweiterte Optimierung.",
-            reportTitle: "Reales Berichtsmuster", reportDesc: "Demo-Analyse-Bildschirm basierend auf Felddaten.",
-            settingsDesc: "Betriebs- und Kostendaten zentral verwalten.", settingsInfo: "Werte werden global verwendet.",
-            clearAll: "Alles löschen", liquidFactor: "Flüssigsalz-Faktor",
-            ms: "Leitfähigkeit", gl: "Konzentration", liq: "Flüssigsalz", d: "Dichte", be: "Baumé", w: "Prozentsatz",
-            simParams: "Rezeptparameter", sim_kilo: "Stoff (kg)", sim_akBoyaOran: "Flottenverhältnis", sim_tuzLitresi: "Flüssigsalz (L)", sim_boya: "Farbe (L)", otherChems: "Chemikalien", sim_soda1: "Soda 1", sim_soda2: "Soda 2", sim_alkali: "Alkali", sim_bikarbonat: "Bikarbonat", sim_kimyasal: "Chemikalie", sim_hafiza1: "Speicher 1", sim_altLimit: "Untere Gr.", sim_ustLimit: "Obere Gr.", tuzBastan: "Salz Zuerst", boyaBastan: "Farbe Zuerst", expectedGL: "Zielkonzentration", lowerLimit: "Untere Grenze", upperLimit: "Obere Grenze", sensorShouldRead: "Sensor sollte lesen",
-            totalGain: "Zusätzlicher Gewinn", manualSys: "Manuelles System", sensorSys: "Sensor (Gewinn)",
-            timeSpent: "Verbrachte Zeit", timeSaved: "Ersparte Zeit", lostLabor: "Verlorene Arbeit", lostEnergy: "Verlorene Energie",
-            laborSavings: "Arbeitsersparnis", energySavings: "Energieersparnis", capacityRev: "Kapazität & Umsatz", extraBatch: "Chargen",
-            bizData: "Betriebsdaten", measTime: "Messung & Zeit", costs: "Kostenfaktoren",
-            machines: "Maschinen", batches: "Chargen (tägl)", days: "Arbeitstage", measPerBatch: "Mess. pro Charge",
-            manTimeMin: "Manuelle Zeit", senTimeSec: "Sensorzeit", successRate: "Erfolgsrate",
-            opSalary: "Bedienerkosten", opMachines: "Maschinen/Bed.", shifts: "Schichten", shiftHours: "Schichtstunden",
-            electricKw: "Strom Maschine", electricPrice: "Strompreis", steamTon: "Dampf Maschine", steamPrice: "Dampfpreis",
-            fabricPerBatch: "Stoff/Charge", fabricPrice: "Verkaufspreis",
-            daily: "Täglich", monthly: "Monatlich", yearly: "Jährlich",
-            u_pcs: "Stk", u_day: "Tag", u_min: "Min", u_sec: "Sek", u_hour: "Std"
-        }
+        hi: { appTitle: "ELiAR App", home: "होम", settingsTab: "सेटिंग्स", nav_calcs: "कैलकुलेटर", nav_ph: "pH ROI", nav_ph_ex: "pH अतिरिक्त", nav_salt: "नमक ROI", nav_salt_ex: "नमक अतिरिक्त", nav_report: "रिपोर्ट", welcome: "स्वागत है", selectModule: "प्रारंभ करने के लिए एक मॉड्यूल चुनें।", calcCategoryTitle: "गणना उपकरण", calcCategoryDesc: "इकाई कनवर्टर और नियंत्रण सिम्युलेटर।" },
+        ur: { appTitle: "ELiAR App", home: "ہوم", settingsTab: "ترتیبات", nav_calcs: "کیلکولیٹر", nav_ph: "pH ROI", nav_ph_ex: "pH اضافی", nav_salt: "نمک ROI", nav_salt_ex: "نمک اضافی", nav_report: "رپورٹ", welcome: "خوش آمدید", selectModule: "شروع کرنے کے لیے ایک ماڈیول منتخب کریں۔", calcCategoryTitle: "حسابی اوزار", calcCategoryDesc: "یونٹ کنورٹر और नियंत्रण سمیلیٹر۔" },
+        bn: { appTitle: "ELiAR App", home: "হোম", settingsTab: "সেটিংস", nav_calcs: "ক্যালকুলেটর", nav_ph: "pH ROI", nav_ph_ex: "pH অতিরিক্ত", nav_salt: "লবণ ROI", nav_salt_ex: "লবণ অতিরিক্ত", nav_report: "রিপোর্ট", welcome: "স্বাগতম", selectModule: "শুরু করতে একটি মডিউল নির্বাচন করুন।", calcCategoryTitle: "গণনা সরঞ্জাম", calcCategoryDesc: "ইউনিট রূপান্তরকারী এবং নিয়ন্ত্রণ সিমুলেটর।" },
+        ru: { appTitle: "ELiAR App", home: "Главная", settingsTab: "Настройки", nav_calcs: "Расчеты", nav_ph: "pH ROI", nav_ph_ex: "pH Экстра", nav_salt: "Соль ROI", nav_salt_ex: "Соль Экстра", nav_report: "Отчет", welcome: "Добро пожаловать", selectModule: "Выберите модуль для начала.", calcCategoryTitle: "Инструменты расчета", calcCategoryDesc: "Конвертер единиц и симулятор контроля." },
+        uz: { appTitle: "ELiAR App", home: "Asosiy", settingsTab: "Sozlamalar", nav_calcs: "Hisoblash", nav_ph: "pH ROI", nav_ph_ex: "pH Ekstra", nav_salt: "Tuz ROI", nav_salt_ex: "Tuz Ekstra", nav_report: "Hisobot", welcome: "Xush kelibsiz", selectModule: "Boshlash uchun modulni tanlang.", calcCategoryTitle: "Hisoblash vositalari", calcCategoryDesc: "Birlik konvertori va boshqaruv simulyatori." },
+        ar: { appTitle: "ELiAR App", home: "الرئيسية", settingsTab: "إعدادات", nav_calcs: "حاسبة", nav_ph: "pH العائد", nav_ph_ex: "pH إضافي", nav_salt: "ملح العائد", nav_salt_ex: "ملح إضافي", nav_report: "تقرير", welcome: "مرحباً", selectModule: "الرجاء تحديد وحدة للبدء.", calcCategoryTitle: "أدوات الحساب", calcCategoryDesc: "محول الوحدات ومحاكي التحكم." }
     };
 
     const { createApp, ref, reactive, computed, onMounted, nextTick } = Vue;
@@ -846,7 +834,14 @@
             const activeTab = ref('home');
             const isSettingsOpen = ref(false); 
             const lang = ref('tr');
-            const t = (key) => translations[lang.value]?.[key] || translations['en']?.[key] || translations['tr'][key] || key;
+            
+            const t = (key) => {
+                if (translations[lang.value] && translations[lang.value][key]) return translations[lang.value][key];
+                if (translations['en'] && translations['en'][key]) return translations['en'][key];
+                if (translations['tr'] && translations['tr'][key]) return translations['tr'][key];
+                return key;
+            };
+            
             const pageTitle = computed(() => t('appTitle'));
 
             const currency = ref('USD'); 
@@ -1077,16 +1072,13 @@
             });
 
             // ================= İLETKENLİK EK KAZANÇ MODÜLÜ =================
-            const saltExtraPeriod = ref('monthly');
             const saltExtraInputs = reactive({ currentReprocess: 8, targetReprocess: 3, costPerReprocess: 150, saltPerBatch: 450, treatmentCostPerKg: 0.8 });
             
             const saltExtraResults = computed(() => {
                 const g = globalInputs;
                 const ex = saltExtraInputs;
                 
-                let multiplier = 1;
-                if (saltExtraPeriod.value === 'monthly') multiplier = g.days;
-                if (saltExtraPeriod.value === 'yearly') multiplier = g.days * 12;
+                const multiplier = g.days; // Aylık bazda hesaplama
                 
                 const totalBatches = g.machines * g.batches * multiplier;
                 
@@ -1160,7 +1152,7 @@
                 phLocalInputs, phPeriod, phResults,
                 phExtraInputs, phExtraPeriod, phExtraResults,
                 saltLocalInputs, saltRoiPeriod, saltRoiResults,
-                saltExtraInputs, saltExtraPeriod, saltExtraResults,
+                saltExtraInputs, saltExtraResults,
                 reportTab, openReportTab,
                 formatNumber, formatTime
             };
