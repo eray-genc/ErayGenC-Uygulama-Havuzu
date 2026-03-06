@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eray GENÇ App</title>
+    <title>ELiAR App</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;700;800;900&family=Montserrat:wght@900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
     <script>
@@ -17,7 +17,7 @@
             darkMode: 'class',
             theme: {
                 fontFamily: { sans: ['Inter', 'sans-serif'], brand: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-                extend: { colors: { brand: { primary: '#00DC82', secondary: '#3b82f6', warning: '#f59e0b', info: '#0ea5e9', dark: '#0f172a', surface: '#1e293b', danger: '#ff4757', purple: '#8b5cf6' } } }
+                extend: { colors: { brand: { primary: '#00DC82', secondary: '#3b82f6', warning: '#f59e0b', info: '#0ea5e9', dark: '#0f172a', surface: '#1e293b', danger: '#ff4757', purple: '#8b5cf6', teal: '#14b8a6', cyan: '#06b6d4', indigo: '#6366f1' } } }
             }
         }
     </script>
@@ -27,7 +27,7 @@
         [v-cloak] { display: none; }
         @keyframes float { 0% { transform: translate(0px, 0px) scale(1); } 33% { transform: translate(30px, -50px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } 100% { transform: translate(0px, 0px) scale(1); } }
         .animate-blob { animation: float 10s infinite ease-in-out; }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar { height: 4px; width: 4px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .dark .custom-scroll::-webkit-scrollbar-thumb { background: #334155; }
@@ -35,7 +35,7 @@
         .slide-fade-leave-active { transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1); }
         .slide-fade-enter-from, .slide-fade-leave-to { transform: translateY(-10px); opacity: 0; }
         @keyframes tickerScroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .ticker-text { display: inline-block; white-space: nowrap; animation: tickerScroll 20s linear infinite; }
+        .ticker-text { display: inline-block; white-space: nowrap; animation: tickerScroll 25s linear infinite; }
         .ticker-wrapper:hover .ticker-text { animation-play-state: paused; }
     </style>
 </head>
@@ -60,17 +60,11 @@
 
         <div class="px-4 sm:px-6 pt-5 pb-4 flex flex-shrink-0 items-center justify-between border-b border-gray-100 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md z-30 relative">
             <div class="flex items-center gap-2 sm:gap-3">
-                <button v-if="activeTab !== 'home'" @click="activeTab = 'home'" class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-all">
+                <button v-if="activeTab !== 'home'" @click="goBack" class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-all">
                     <i class="ri-arrow-left-s-line text-2xl -ml-0.5"></i>
                 </button>
-                <div class="flex flex-col">
-                    <div class="flex items-center gap-2 mb-0.5">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white shadow-lg shadow-brand-primary/30">
-                            <i class="ri-drop-fill text-xl"></i>
-                        </div>
-                        <span class="font-brand font-extrabold text-lg sm:text-xl tracking-tight text-gray-900 dark:text-white">Eray<span class="text-brand-primary">GENÇ</span></span>
-                    </div>
-                    <span class="text-[9px] sm:text-[10px] font-bold tracking-wider text-gray-400 dark:text-slate-500 uppercase">{{ t('appTitle') }}</span>
+                <div class="flex items-center justify-center">
+                    <img src="https://www.eliar.com/wp-content/uploads/2021/03/Eliar-Elektronik_Logo.svg" alt="ELiAR Elektronik" class="h-6 sm:h-8 object-contain brightness-0 dark:invert transition-all duration-300">
                 </div>
             </div>
             
@@ -91,91 +85,125 @@
             </div>
         </div>
 
-        <div v-show="isSettingsOpen" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 slide-fade-enter-active">
-            <div class="bg-white dark:bg-[#0f172a] border border-gray-200 dark:border-slate-700 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scroll shadow-2xl relative">
-                
-                <div class="sticky top-0 bg-white/90 dark:bg-[#0f172a]/90 backdrop-blur-md border-b border-gray-100 dark:border-slate-800 p-4 flex justify-between items-center z-10">
-                    <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2"><i class="ri-settings-3-line text-brand-secondary"></i> Merkezi İşletme Ayarları</h2>
-                    <button @click="isSettingsOpen = false" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-500 flex justify-center items-center hover:text-red-500"><i class="ri-close-line text-xl"></i></button>
-                </div>
-
-                <div class="p-5 space-y-5">
-                    <p class="text-xs text-gray-500 -mt-2">Buraya girdiğiniz veriler arka planda tüm hesaplama modüllerine (Tuz, pH, Simülasyon) anında etki eder.</p>
-
-                    <div class="bg-brand-primary/10 dark:bg-brand-primary/5 p-4 rounded-2xl border border-brand-primary/30 flex items-center justify-between">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-bold text-brand-primary flex items-center gap-2"><i class="ri-water-percent-line"></i> {{ t('liquidFactor') }}</span>
-                            <span class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">1 g/L Katı = X cc/L Sıvı Tuz</span>
-                        </div>
-                        <input type="number" step="0.1" v-model="liquidFactor" class="w-24 bg-white dark:bg-slate-900 border border-brand-primary/40 rounded-xl px-3 py-2 text-base font-bold text-center text-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary">
+        <transition name="slide-fade">
+            <div v-show="isSettingsOpen" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+                <div class="bg-white dark:bg-[#0f172a] border border-gray-200 dark:border-slate-700 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scroll shadow-2xl relative">
+                    <div class="sticky top-0 bg-white/90 dark:bg-[#0f172a]/90 backdrop-blur-md border-b border-gray-100 dark:border-slate-800 p-4 flex justify-between items-center z-10">
+                        <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2"><i class="ri-settings-3-line text-brand-secondary"></i> {{ t('settingsTab') }}</h2>
+                        <button @click="isSettingsOpen = false" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-500 flex justify-center items-center hover:text-red-500 transition-colors"><i class="ri-close-line text-xl"></i></button>
                     </div>
+                    <div class="p-5 space-y-5">
+                        <p class="text-xs text-gray-500 -mt-2">{{ t('settingsInfo') }}</p>
 
-                    <div class="bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-700 p-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-brand-secondary mb-4 flex items-center gap-2"><i class="ri-building-4-line text-lg"></i> {{ t('bizData') }}</h3>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            <div v-for="k in ['machines', 'batches', 'days', 'shifts', 'shiftHours', 'fabricPerBatch']" :key="k">
-                                <label class="block text-[10px] text-gray-500 font-semibold mb-1">{{ t(k) }}</label>
-                                <div class="relative">
-                                    <input type="number" v-model="globalInputs[k]" class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-secondary">
-                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ getUnit(k) }}</span>
+                        <div class="bg-brand-primary/10 dark:bg-brand-primary/5 p-4 rounded-2xl border border-brand-primary/30 flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-brand-primary flex items-center gap-2"><i class="ri-water-percent-line"></i> {{ t('liquidFactor') }}</span>
+                                <span class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">1 g/L Katı = X cc/L Sıvı Tuz</span>
+                            </div>
+                            <input type="number" step="0.1" v-model="liquidFactor" class="w-24 bg-white dark:bg-slate-900 border border-brand-primary/40 rounded-xl px-3 py-2 text-base font-bold text-center text-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                        </div>
+
+                        <div class="bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-700 p-4">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-brand-secondary mb-4 flex items-center gap-2"><i class="ri-building-4-line text-lg"></i> {{ t('bizData') }}</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <div v-for="k in ['machines', 'batches', 'days', 'shifts', 'shiftHours', 'fabricPerBatch']" :key="k">
+                                    <label class="block text-[10px] text-gray-500 font-semibold mb-1">{{ t(k) }}</label>
+                                    <div class="relative">
+                                        <input type="number" v-model="globalInputs[k]" class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-secondary">
+                                        <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ getUnit(k) }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-700 p-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-orange-500 mb-4 flex items-center gap-2"><i class="ri-money-euro-circle-line text-lg"></i> {{ t('costs') }}</h3>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            <div v-for="k in ['opSalary', 'opMachines', 'electricKw', 'electricPrice', 'steamTon', 'steamPrice', 'fabricPrice']" :key="k">
-                                <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">{{ t(k) }}</label>
-                                <div class="relative">
-                                    <input type="number" v-model="globalInputs[k]" class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-orange-500">
-                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ getUnit(k) }}</span>
+                        <div class="bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-700 p-4">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-orange-500 mb-4 flex items-center gap-2"><i class="ri-money-euro-circle-line text-lg"></i> {{ t('costs') }}</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <div v-for="k in ['opSalary', 'opMachines', 'electricKw', 'electricPrice', 'steamTon', 'steamPrice', 'fabricPrice']" :key="k">
+                                    <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">{{ t(k) }}</label>
+                                    <div class="relative">
+                                        <input type="number" v-model="globalInputs[k]" class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-orange-500">
+                                        <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ getUnit(k) }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <button @click="isSettingsOpen = false" class="w-full py-3 bg-brand-secondary text-white font-bold rounded-xl shadow-lg hover:bg-blue-600 transition-colors">Kaydet ve Kapat</button>
                     </div>
-                    
-                    <button @click="isSettingsOpen = false" class="w-full py-3 bg-brand-secondary text-white font-bold rounded-xl shadow-lg hover:bg-blue-600 transition-colors">Kaydet ve Kapat</button>
                 </div>
             </div>
-        </div>
+        </transition>
 
-        <div class="flex-1 overflow-y-auto custom-scroll relative bg-gray-50/50 dark:bg-slate-900/20 pb-32">
+        <div class="flex-1 overflow-y-auto custom-scroll relative bg-gray-50/50 dark:bg-slate-900/20 pb-32 flex flex-col">
             
-            <div v-show="activeTab === 'home'" class="p-6 h-full flex flex-col items-center justify-center gap-6">
-                <div class="text-center mb-2">
-                    <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white shadow-2xl shadow-brand-primary/40 mb-4 transform rotate-3">
-                        <i class="ri-drop-fill text-5xl transform -rotate-3"></i>
-                    </div>
-                    <h2 class="text-2xl font-brand font-bold text-gray-800 dark:text-white mb-1">{{ t('welcome') }}</h2>
+            <div v-show="activeTab === 'home'" class="p-6 flex-1 flex flex-col items-center justify-center gap-6 relative">
+                
+                <div class="text-center mb-2 mt-4 w-full max-w-2xl">
+                    <h2 class="text-2xl font-brand font-bold text-gray-800 dark:text-white mb-2">{{ t('welcome') }}</h2>
                     <p class="text-sm text-gray-500 dark:text-slate-400">{{ t('selectModule') }}</p>
                 </div>
 
-                <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <button @click="activeTab = 'salt'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-primary/50 text-left flex items-center gap-4 transition-all">
+                <div class="w-full max-w-2xl grid grid-cols-2 sm:grid-cols-3 gap-3 z-10 mb-auto">
+                    
+                    <button @click="activeTab = 'calculators'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-indigo-500/50 text-center flex flex-col items-center gap-3 transition-all col-span-2 sm:col-span-3 mb-2 bg-gradient-to-r from-indigo-500/5 to-transparent">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-calculator-fill text-2xl"></i></div>
+                        <div>
+                            <h3 class="font-bold text-sm mb-0.5 group-hover:text-indigo-500">{{ t('calcCategoryTitle') }}</h3>
+                            <p class="text-[10px] text-gray-500">{{ t('calcCategoryDesc') }}</p>
+                        </div>
+                    </button>
+
+                    <button @click="activeTab = 'ph_roi'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-secondary/50 text-center flex flex-col items-center gap-3 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-brand-secondary/10 text-brand-secondary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-line-chart-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-xs mb-1 group-hover:text-brand-secondary">{{ t('roiTitle') }}</h3></div>
+                    </button>
+
+                    <button @click="activeTab = 'ph_extra'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-teal-500/50 text-center flex flex-col items-center gap-3 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-500 flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-rocket-2-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-xs mb-1 group-hover:text-teal-500">{{ t('phExtraTitle') }}</h3></div>
+                    </button>
+
+                    <button @click="activeTab = 'salt_roi'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-primary/50 text-center flex flex-col items-center gap-3 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-bar-chart-box-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-xs text-gray-800 dark:text-white mb-1 group-hover:text-brand-primary">{{ t('saltRoiTitle') }}</h3></div>
+                    </button>
+                    
+                    <button @click="activeTab = 'salt_extra'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-cyan-500/50 text-center flex flex-col items-center gap-3 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-500 flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-shield-flash-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-xs mb-1 group-hover:text-cyan-500">{{ t('saltExtraTitle') }}</h3></div>
+                    </button>
+
+                    <button @click="openReportTab" class="group col-span-2 sm:col-span-2 relative overflow-hidden bg-gradient-to-br from-brand-purple to-indigo-900 rounded-3xl p-4 border border-brand-purple/50 shadow-xl hover:shadow-brand-purple/20 text-center flex flex-col items-center gap-3 transition-all">
+                        <div class="w-12 h-12 rounded-2xl bg-white/20 text-white flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-file-chart-fill text-2xl"></i></div>
+                        <div><h3 class="font-bold text-sm text-white mb-1">{{ t('reportTitle') }}</h3><p class="text-[10px] text-indigo-200">{{ t('reportDesc') }}</p></div>
+                    </button>
+                </div>
+                
+                <div class="absolute bottom-4 left-0 w-full text-center opacity-20 hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                    <p class="text-[9px] font-mono text-gray-500 dark:text-gray-400 pointer-events-auto inline-block">
+                        <i class="ri-code-s-slash-line align-middle"></i> Designed & Powered by <strong class="tracking-widest">Eray A. GENÇ</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div v-show="activeTab === 'calculators'" class="p-6 h-full flex flex-col items-center justify-center gap-6">
+                <div class="text-center mb-4">
+                    <div class="w-20 h-20 mx-auto rounded-3xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 shadow-xl border border-indigo-500/20 mb-4">
+                        <i class="ri-calculator-fill text-5xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-brand font-bold text-gray-800 dark:text-white mb-1">{{ t('calcCategoryTitle') }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-slate-400">Kullanmak istediğiniz aracı seçin</p>
+                </div>
+
+                <div class="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-4 z-10 mb-auto">
+                    <button @click="activeTab = 'salt'" class="group bg-white dark:bg-slate-800 rounded-3xl p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-primary/50 text-left flex items-center gap-4 transition-all">
                         <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-flask-fill text-2xl"></i></div>
                         <div><h3 class="font-bold text-sm mb-1 group-hover:text-brand-primary">{{ t('saltTitle') }}</h3><p class="text-[10px] text-gray-500">{{ t('saltDesc') }}</p></div>
                     </button>
 
-                    <button @click="activeTab = 'simulator'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-info/50 text-left flex items-center gap-4 transition-all">
+                    <button @click="activeTab = 'simulator'" class="group bg-white dark:bg-slate-800 rounded-3xl p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-info/50 text-left flex items-center gap-4 transition-all">
                         <div class="w-12 h-12 rounded-2xl bg-brand-info/10 text-brand-info flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-dashboard-3-fill text-2xl"></i></div>
                         <div><h3 class="font-bold text-sm mb-1 group-hover:text-brand-info">{{ t('simTitle') }}</h3><p class="text-[10px] text-gray-500">{{ t('simDesc') }}</p></div>
-                    </button>
-
-                    <button @click="activeTab = 'ph_roi'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-secondary/50 text-left flex items-center gap-4 transition-all">
-                        <div class="w-12 h-12 rounded-2xl bg-brand-secondary/10 text-brand-secondary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-line-chart-fill text-2xl"></i></div>
-                        <div><h3 class="font-bold text-sm mb-1 group-hover:text-brand-secondary">{{ t('roiTitle') }}</h3><p class="text-[10px] text-gray-500">{{ t('roiDesc') }}</p></div>
-                    </button>
-
-                    <button @click="activeTab = 'salt_roi'" class="group bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 border border-gray-100 dark:border-slate-700 shadow-xl hover:border-brand-primary/50 text-left flex items-center gap-4 transition-all">
-                        <div class="w-12 h-12 rounded-2xl bg-brand-primary/10 text-brand-primary flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-bar-chart-box-fill text-2xl"></i></div>
-                        <div><h3 class="font-bold text-sm text-gray-800 dark:text-white mb-1 group-hover:text-brand-primary">{{ t('saltRoiTitle') }}</h3><p class="text-[10px] text-gray-500">{{ t('saltRoiDesc') }}</p></div>
-                    </button>
-
-                    <button @click="openReportTab" class="group sm:col-span-2 relative overflow-hidden bg-gradient-to-br from-brand-purple to-indigo-900 rounded-3xl p-5 border border-brand-purple/50 shadow-xl hover:shadow-brand-purple/20 text-left flex items-center gap-4 transition-all">
-                        <div class="w-12 h-12 rounded-2xl bg-white/20 text-white flex justify-center items-center group-hover:scale-110 transition-transform"><i class="ri-file-chart-fill text-2xl"></i></div>
-                        <div><h3 class="font-bold text-sm text-white mb-1">{{ t('reportTitle') }}</h3><p class="text-[10px] text-indigo-200">{{ t('reportDesc') }}</p></div>
                     </button>
                 </div>
             </div>
@@ -246,23 +274,14 @@
                     <div class="bg-gradient-to-br from-[#0a0f1c] to-slate-900 rounded-3xl p-5 border border-brand-info/40 shadow-2xl relative overflow-hidden">
                         <div class="absolute top-0 right-0 bg-brand-info text-white text-[9px] font-bold px-3 py-1 rounded-bl-xl">Boya Hacimden Düşüldü</div>
                         <h3 class="text-sm font-bold text-white mb-4"><i class="ri-flask-line text-brand-info align-middle"></i> {{ t('tuzBastan') }}</h3>
-                        
                         <div class="text-center mb-4">
                             <p class="text-[10px] text-gray-400">{{ t('expectedGL') }}</p>
                             <p class="text-4xl font-mono font-bold text-white">{{ formatNumber(simResults.tuzBastan.target, 2) }} <span class="text-sm text-gray-500">g/L</span></p>
                         </div>
-                        
                         <div class="flex justify-between items-center bg-black/30 rounded-xl p-3 border border-white/5 mb-4">
-                            <div class="text-center w-1/2 border-r border-white/10">
-                                <p class="text-[9px] text-gray-500 uppercase">{{ t('lowerLimit') }}</p>
-                                <p class="text-sm font-bold text-red-400">{{ formatNumber(simResults.tuzBastan.min, 2) }}</p>
-                            </div>
-                            <div class="text-center w-1/2">
-                                <p class="text-[9px] text-gray-500 uppercase">{{ t('upperLimit') }}</p>
-                                <p class="text-sm font-bold text-emerald-400">{{ formatNumber(simResults.tuzBastan.max, 2) }}</p>
-                            </div>
+                            <div class="text-center w-1/2 border-r border-white/10"><p class="text-[9px] text-gray-500 uppercase">{{ t('lowerLimit') }}</p><p class="text-sm font-bold text-red-400">{{ formatNumber(simResults.tuzBastan.min, 2) }}</p></div>
+                            <div class="text-center w-1/2"><p class="text-[9px] text-gray-500 uppercase">{{ t('upperLimit') }}</p><p class="text-sm font-bold text-emerald-400">{{ formatNumber(simResults.tuzBastan.max, 2) }}</p></div>
                         </div>
-
                         <div class="bg-brand-info/20 border border-brand-info/30 rounded-xl p-3 text-center">
                             <p class="text-[10px] text-brand-info/80 font-bold uppercase tracking-wider mb-1"><i class="ri-dashboard-3-line"></i> {{ t('sensorShouldRead') }}</p>
                             <p class="text-2xl font-bold text-brand-info">{{ formatNumber(simResults.tuzBastan.ms, 1) }} <span class="text-xs">mS/cm</span></p>
@@ -272,23 +291,14 @@
                     <div class="bg-gradient-to-br from-[#0a0f1c] to-slate-900 rounded-3xl p-5 border border-brand-primary/40 shadow-2xl relative overflow-hidden">
                         <div class="absolute top-0 right-0 bg-brand-primary text-slate-900 text-[9px] font-bold px-3 py-1 rounded-bl-xl">Boya Hacimde Kaldı (0)</div>
                         <h3 class="text-sm font-bold text-white mb-4"><i class="ri-paint-fill text-brand-primary align-middle"></i> {{ t('boyaBastan') }}</h3>
-                        
                         <div class="text-center mb-4">
                             <p class="text-[10px] text-gray-400">{{ t('expectedGL') }}</p>
                             <p class="text-4xl font-mono font-bold text-white">{{ formatNumber(simResults.boyaBastan.target, 2) }} <span class="text-sm text-gray-500">g/L</span></p>
                         </div>
-                        
                         <div class="flex justify-between items-center bg-black/30 rounded-xl p-3 border border-white/5 mb-4">
-                            <div class="text-center w-1/2 border-r border-white/10">
-                                <p class="text-[9px] text-gray-500 uppercase">{{ t('lowerLimit') }}</p>
-                                <p class="text-sm font-bold text-red-400">{{ formatNumber(simResults.boyaBastan.min, 2) }}</p>
-                            </div>
-                            <div class="text-center w-1/2">
-                                <p class="text-[9px] text-gray-500 uppercase">{{ t('upperLimit') }}</p>
-                                <p class="text-sm font-bold text-emerald-400">{{ formatNumber(simResults.boyaBastan.max, 2) }}</p>
-                            </div>
+                            <div class="text-center w-1/2 border-r border-white/10"><p class="text-[9px] text-gray-500 uppercase">{{ t('lowerLimit') }}</p><p class="text-sm font-bold text-red-400">{{ formatNumber(simResults.boyaBastan.min, 2) }}</p></div>
+                            <div class="text-center w-1/2"><p class="text-[9px] text-gray-500 uppercase">{{ t('upperLimit') }}</p><p class="text-sm font-bold text-emerald-400">{{ formatNumber(simResults.boyaBastan.max, 2) }}</p></div>
                         </div>
-
                         <div class="bg-brand-primary/10 border border-brand-primary/30 rounded-xl p-3 text-center">
                             <p class="text-[10px] text-brand-primary/80 font-bold uppercase tracking-wider mb-1"><i class="ri-dashboard-3-line"></i> {{ t('sensorShouldRead') }}</p>
                             <p class="text-2xl font-bold text-brand-primary">{{ formatNumber(simResults.boyaBastan.ms, 1) }} <span class="text-xs">mS/cm</span></p>
@@ -300,51 +310,125 @@
             <div v-show="activeTab === 'ph_roi'" class="relative">
                 <div class="sticky top-0 z-30 bg-[#0a0f1c] sm:rounded-b-3xl sm:mx-4 p-4 sm:p-5 shadow-2xl border-b border-x border-slate-700/50 mb-6">
                     <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4">
-                        <button v-for="p in ['daily', 'monthly', 'yearly']" :key="p" @click="phPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="phPeriod === p ? 'bg-brand-primary text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
+                        <button v-for="p in ['daily', 'monthly', 'yearly']" :key="p" @click="phPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="phPeriod === p ? 'bg-brand-secondary text-white shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
                     </div>
                     <div class="text-center mb-5">
                         <p class="text-[10px] text-gray-400 font-medium mb-1">pH - {{ t('totalGain') }} ({{ t(phPeriod) }})</p>
-                        <h2 class="text-4xl font-brand font-extrabold text-brand-primary drop-shadow-[0_0_15px_rgba(0,220,130,0.3)]">{{ currSymbol }} {{ formatNumber(phResults.totalSavings) }}</h2>
+                        <h2 class="text-4xl font-brand font-extrabold text-brand-secondary drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]">{{ currSymbol }} {{ formatNumber(phResults.totalSavings) }}</h2>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-2 sm:gap-3">
                         <div class="text-center pb-1 border-b border-brand-danger/30"><span class="text-[9px] font-bold text-brand-danger uppercase tracking-widest">{{ t('manualSys') }}</span></div>
-                        <div class="text-center pb-1 border-b border-brand-primary/30"><span class="text-[9px] font-bold text-brand-primary uppercase tracking-widest">{{ t('sensorSys') }}</span></div>
+                        <div class="text-center pb-1 border-b border-brand-secondary/30"><span class="text-[9px] font-bold text-brand-secondary uppercase tracking-widest">{{ t('sensorSys') }}</span></div>
 
                         <div class="bg-brand-danger/10 rounded-xl p-2.5 border border-brand-danger/20 flex flex-col justify-center">
                             <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-gray-400">{{ t('timeSpent') }}</p><i class="ri-arrow-right-down-line text-brand-danger text-xs"></i></div>
                             <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-red-200">{{ formatTime(phResults.manualTotalHours) }}</p>
                         </div>
-                        <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col justify-center">
-                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-gray-300">{{ t('timeSaved') }}</p><i class="ri-arrow-right-up-line text-brand-primary text-xs"></i></div>
-                            <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-brand-primary">{{ formatTime(phResults.timeSavedHours) }}</p>
+                        <div class="bg-brand-secondary/10 rounded-xl p-2.5 border border-brand-secondary/30 flex flex-col justify-center">
+                            <div class="flex justify-between items-center mb-1"><p class="text-[9px] sm:text-[10px] text-blue-200">{{ t('timeSaved') }}</p><i class="ri-arrow-right-up-line text-brand-secondary text-xs"></i></div>
+                            <p class="text-xs sm:text-sm font-bold font-mono tracking-wider text-brand-secondary">{{ formatTime(phResults.timeSavedHours) }}</p>
                         </div>
 
                         <div class="bg-brand-danger/10 rounded-xl p-2.5 border border-brand-danger/20 flex flex-col gap-2 justify-center">
                             <div><p class="text-[9px] text-gray-400">{{ t('lostLabor') }}</p><p class="text-xs font-bold text-red-200">{{ currSymbol }} {{ formatNumber(phResults.manualLaborCost) }}</p></div>
                             <div><p class="text-[9px] text-gray-400">{{ t('lostEnergy') }}</p><p class="text-xs font-bold text-red-200">{{ currSymbol }} {{ formatNumber(phResults.manualEnergyCost) }}</p></div>
                         </div>
-                        <div class="bg-brand-primary/10 rounded-xl p-2.5 border border-brand-primary/30 flex flex-col gap-2 justify-center">
-                            <div><p class="text-[9px] text-gray-300">{{ t('laborSavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.laborSavings) }}</p></div>
-                            <div><p class="text-[9px] text-gray-300">{{ t('energySavings') }}</p><p class="text-xs font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.energySavings) }}</p></div>
+                        <div class="bg-brand-secondary/10 rounded-xl p-2.5 border border-brand-secondary/30 flex flex-col gap-2 justify-center">
+                            <div><p class="text-[9px] text-blue-200">{{ t('laborSavings') }}</p><p class="text-xs font-bold text-brand-secondary">{{ currSymbol }} {{ formatNumber(phResults.laborSavings) }}</p></div>
+                            <div><p class="text-[9px] text-blue-200">{{ t('energySavings') }}</p><p class="text-xs font-bold text-brand-secondary">{{ currSymbol }} {{ formatNumber(phResults.energySavings) }}</p></div>
                         </div>
 
-                        <div class="bg-gradient-to-r from-[#0d1b2a] to-brand-primary/10 rounded-xl p-3 border border-brand-primary/40 col-span-2 flex items-center justify-between">
-                            <div><p class="text-[9px] font-bold text-white uppercase tracking-wider mb-0.5"><i class="ri-rocket-2-fill text-brand-primary"></i> {{ t('capacityRev') }}</p><p class="text-lg sm:text-xl font-bold text-brand-primary">{{ currSymbol }} {{ formatNumber(phResults.gainedRevenue) }}</p></div>
-                            <div class="text-right"><p class="text-[10px] font-bold text-white">+{{ formatNumber(phResults.gainedBatches) }} {{ t('extraBatch') }}</p><p class="text-[10px] font-bold text-brand-secondary">+{{ formatNumber(phResults.gainedBatches * globalInputs.fabricPerBatch, 0) }} kg</p></div>
+                        <div class="bg-gradient-to-r from-[#0d1b2a] to-brand-secondary/10 rounded-xl p-3 border border-brand-secondary/40 col-span-2 flex items-center justify-between">
+                            <div><p class="text-[9px] font-bold text-white uppercase tracking-wider mb-0.5"><i class="ri-rocket-2-fill text-brand-secondary"></i> {{ t('capacityRev') }}</p><p class="text-lg sm:text-xl font-bold text-brand-secondary">{{ currSymbol }} {{ formatNumber(phResults.gainedRevenue) }}</p></div>
+                            <div class="text-right"><p class="text-[10px] font-bold text-white">+{{ formatNumber(phResults.gainedBatches) }} {{ t('extraBatch') }}</p><p class="text-[10px] font-bold text-blue-300">+{{ formatNumber(phResults.gainedBatches * globalInputs.fabricPerBatch, 0) }} kg</p></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="px-4 pb-8 max-w-2xl mx-auto">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm p-4">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-brand-primary mb-4 flex items-center gap-2"><i class="ri-test-tube-line text-lg"></i> pH {{ t('measTime') }}</h3>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-brand-secondary mb-4 flex items-center gap-2"><i class="ri-test-tube-line text-lg"></i> pH {{ t('measTime') }}</h3>
                         <div class="grid grid-cols-2 gap-3 mt-2">
                             <div v-for="k in ['measPerBatch', 'manTimeMin', 'senTimeSec', 'successRate']" :key="k">
                                 <label class="block text-[10px] text-gray-500 font-semibold">{{ t(k) }}</label>
                                 <div class="relative mt-1">
-                                    <input type="number" v-model="phLocalInputs[k]" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-primary">
+                                    <input type="number" v-model="phLocalInputs[k]" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-brand-secondary">
                                     <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ getUnit(k) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-show="activeTab === 'ph_extra'" class="relative">
+                <div class="sticky top-0 z-30 bg-[#0a0f1c] sm:rounded-b-3xl sm:mx-4 p-4 sm:p-5 shadow-2xl border-b border-x border-slate-700/50 mb-6">
+                    <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4">
+                        <button v-for="p in ['monthly', 'yearly']" :key="p" @click="phExtraPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="phExtraPeriod === p ? 'bg-teal-500 text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
+                    </div>
+                    <div class="text-center mb-5">
+                        <p class="text-[10px] text-gray-400 font-medium mb-1">pH Gizli Kayıplar - Toplam Önlenen Zarar ({{ t(phExtraPeriod) }})</p>
+                        <h2 class="text-4xl font-brand font-extrabold text-teal-500 drop-shadow-[0_0_15px_rgba(20,184,166,0.3)]">{{ currSymbol }} {{ formatNumber(phExtraResults.totalExtraSavings) }}</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-gradient-to-br from-slate-900 to-[#0a1917] rounded-2xl p-4 border border-teal-500/30 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-teal-500/20 text-teal-500 text-[8px] font-bold px-2 py-1 rounded-bl-lg">RFT ARTIŞI</div>
+                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-recycle-line text-teal-500"></i> Önlenen Tamir / İlave</p>
+                            <p class="text-2xl font-bold text-teal-400 mb-2">{{ currSymbol }} {{ formatNumber(phExtraResults.reprocessSavings) }}</p>
+                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2"><strong class="text-teal-500">{{ formatNumber(phExtraResults.preventedBatches, 0) }} Parti</strong> tamirden kurtarıldı.</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-slate-900 to-[#1c0a0a] rounded-2xl p-4 border border-red-500/30 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-red-500/20 text-red-500 text-[8px] font-bold px-2 py-1 rounded-bl-lg">ISI KORUNUMU</div>
+                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-fire-line text-red-500"></i> Bekleme Isı / Buhar Kaybı</p>
+                            <p class="text-2xl font-bold text-red-400 mb-2">{{ currSymbol }} {{ formatNumber(phExtraResults.steamSavings) }}</p>
+                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2">Operatör beklerken harcanan <strong class="text-red-500">{{ formatNumber(phExtraResults.totalWaitHours, 1) }} saatlik</strong> ısı telafisi.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-4 space-y-4 pb-8 max-w-2xl mx-auto">
+                    <div class="bg-gradient-to-r from-blue-900/30 to-slate-900 rounded-2xl p-4 border border-blue-500/30 flex gap-3 items-start">
+                        <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 mt-1"><i class="ri-drop-fill text-xl"></i></div>
+                        <div>
+                            <h4 class="text-sm font-bold text-blue-400 mb-1">Yumuşak Su Anomalisi Tespiti</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">pH probu sayesinde makineye giren yumuşak suyun kalitesi anlık izlenir. Reçinelerdeki veya su hazırlama dairesindeki bir arıza, kumaş henüz bozulmadan (erken uyarı ile) tespit edilir.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-purple-900/30 to-slate-900 rounded-2xl p-4 border border-purple-500/30 flex gap-3 items-start">
+                        <div class="w-10 h-10 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0 mt-1"><i class="ri-bar-chart-grouped-line text-xl"></i></div>
+                        <div>
+                            <h4 class="text-sm font-bold text-purple-400 mb-1">Canlı Dozaj Eğrisi Optimizasyonu</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">Soda 1 ve Soda 2 dozajları sırasında pH'ın istenmeyen hızda artışı anlık görülür. Örneğin; -2 eğrisinde dozajlanan soda pH'ı çok hızlı bazik tarafa çekiyorsa, operatör eğriyi -3'e alarak prosesi mükemmel şekilde optimize eder.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm p-4 mt-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-teal-500 mb-4 flex items-center gap-2"><i class="ri-settings-4-line text-lg"></i> Gizli Kayıp Parametreleri</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1">Mevcut Tamir Oranı (%)</label>
+                                <input type="number" v-model="phExtraInputs.currentReprocess" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1">Hedef Tamir Oranı (%)</label>
+                                <input type="number" v-model="phExtraInputs.targetReprocess" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-teal-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">Ort. 1 Parti Tamir Maliyeti</label>
+                                <div class="relative">
+                                    <input type="number" v-model="phExtraInputs.costPerReprocess" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-teal-500">
+                                    <span class="absolute right-2 top-2 text-[10px] text-gray-400 font-bold">{{ currSymbol }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">Bekleme Buhar Kaybı</label>
+                                <div class="relative">
+                                    <input type="number" step="0.1" v-model="phExtraInputs.steamWaste" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-teal-500">
+                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">Ton/h</span>
                                 </div>
                             </div>
                         </div>
@@ -391,7 +475,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-[10px] font-bold text-white">+{{ formatNumber(saltRoiResults.gainedBatches) }} {{ t('extraBatch') }}</p>
-                                <p class="text-[10px] font-bold text-brand-secondary">+{{ formatNumber(saltRoiResults.gainedBatches * globalInputs.fabricPerBatch, 0) }} kg</p>
+                                <p class="text-[10px] font-bold text-brand-primary">+{{ formatNumber(saltRoiResults.gainedBatches * globalInputs.fabricPerBatch, 0) }} kg</p>
                             </div>
                         </div>
                     </div>
@@ -413,11 +497,100 @@
                 </div>
             </div>
 
+            <div v-show="activeTab === 'salt_extra'" class="relative">
+                <div class="sticky top-0 z-30 bg-[#0a0f1c] sm:rounded-b-3xl sm:mx-4 p-4 sm:p-5 shadow-2xl border-b border-x border-slate-700/50 mb-6">
+                    <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4">
+                        <button v-for="p in ['monthly', 'yearly']" :key="p" @click="saltExtraPeriod = p" class="flex-1 text-[11px] sm:text-xs font-bold py-1.5 rounded-lg transition-all" :class="saltExtraPeriod === p ? 'bg-cyan-500 text-slate-900 shadow-md' : 'text-gray-400 hover:text-white'">{{ t(p) }}</button>
+                    </div>
+                    <div class="text-center mb-5">
+                        <p class="text-[10px] text-gray-400 font-medium mb-1">Tuz & Arıtma - Toplam Önlenen Zarar ({{ t(saltExtraPeriod) }})</p>
+                        <h2 class="text-4xl font-brand font-extrabold text-cyan-500 drop-shadow-[0_0_15px_rgba(6,182,212,0.3)]">{{ currSymbol }} {{ formatNumber(saltExtraResults.totalExtraSavings) }}</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-gradient-to-br from-slate-900 to-[#0a1917] rounded-2xl p-4 border border-cyan-500/30 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-cyan-500/20 text-cyan-500 text-[8px] font-bold px-2 py-1 rounded-bl-lg">RFT ARTIŞI</div>
+                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-recycle-line text-cyan-500"></i> Önlenen Tamir / İlave</p>
+                            <p class="text-2xl font-bold text-cyan-400 mb-2">{{ currSymbol }} {{ formatNumber(saltExtraResults.reprocessSavings) }}</p>
+                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2"><strong class="text-cyan-500">{{ formatNumber(saltExtraResults.preventedBatches, 0) }} Parti</strong> tamirden kurtarıldı.</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-slate-900 to-[#1c1a0a] rounded-2xl p-4 border border-orange-500/30 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-orange-500/20 text-orange-500 text-[8px] font-bold px-2 py-1 rounded-bl-lg">ARITMA YÜKÜ</div>
+                            <p class="text-[10px] text-gray-400 mb-1 flex items-center gap-1"><i class="ri-water-flash-fill text-orange-500"></i> Bertaraf Edilen Tuz Tasarrufu</p>
+                            <p class="text-2xl font-bold text-orange-400 mb-2">{{ currSymbol }} {{ formatNumber(saltExtraResults.treatmentSavings) }}</p>
+                            <p class="text-[9px] text-gray-500 border-t border-slate-700 pt-2">Arıtmaya gitmesi önlenen <strong class="text-orange-500">{{ formatNumber(saltExtraResults.preventedSaltKg, 0) }} kg</strong> tuz.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-4 space-y-4 pb-8 max-w-2xl mx-auto">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-gradient-to-r from-blue-900/30 to-slate-900 rounded-2xl p-4 border border-blue-500/30 flex flex-col gap-2">
+                            <h4 class="text-sm font-bold text-blue-400 flex items-center gap-2"><i class="ri-filter-3-fill text-lg"></i> Su Filtrasyon Anomalisi</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">İlk su alımında saf suyun iletkenlik değeri ölçülerek, yumuşak su hazırlama dairesindeki reçine problemleri boyama başlamadan tespit edilir.</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-amber-900/30 to-slate-900 rounded-2xl p-4 border border-amber-500/30 flex flex-col gap-2">
+                            <h4 class="text-sm font-bold text-amber-400 flex items-center gap-2"><i class="ri-t-shirt-2-fill text-lg"></i> Ham Kumaş İletkenliği</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">Makineye kumaş yüklendiğinde, pamuğun doğasından veya önceki proseslerden gelen safsızlıklar (ekstra iletkenlik yükü) anında fark edilir.</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-red-900/30 to-slate-900 rounded-2xl p-4 border border-red-500/30 flex flex-col gap-2">
+                            <h4 class="text-sm font-bold text-red-400 flex items-center gap-2"><i class="ri-fire-fill text-lg"></i> Kaynar Yıkama Geçişi</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">Kaynar yıkamaya geçmeden önce banyodaki tuzluluğun istenen seviyeye düşüp düşmediği canlı izlenir, olası renk çökmeleri önlenir.</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-emerald-900/30 to-slate-900 rounded-2xl p-4 border border-emerald-500/30 flex flex-col gap-2">
+                            <h4 class="text-sm font-bold text-emerald-400 flex items-center gap-2"><i class="ri-drop-fill text-lg"></i> Durulama Optimizasyonu</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">Yıkama banyolarında suyun iletkenliği takip edilerek, kumaşın tuzdan tamamen arındığı kanıtlanır. Gereksiz yıkamalar tarihe karışır.</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-indigo-900/30 to-slate-900 rounded-2xl p-4 border border-indigo-500/30 flex flex-col gap-2 sm:col-span-2">
+                            <h4 class="text-sm font-bold text-indigo-400 flex items-center gap-2"><i class="ri-flask-fill text-lg"></i> Gerçek Flotte (Hacim) Tespiti & Canlı İzleme</h4>
+                            <p class="text-[10px] text-gray-400 leading-relaxed">Kütle-hacim dengesi sayesinde kumaşın tuttuğu gizli su hesaba katılarak 'Gerçek Flotte' saptanır. Tüm batch boyunca kesintisiz canlı izleme yapılır.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm p-4 mt-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-cyan-500 mb-4 flex items-center gap-2"><i class="ri-settings-4-line text-lg"></i> Tuz & Arıtma Parametreleri</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1">Mevcut Tamir Oranı (%)</label>
+                                <input type="number" v-model="saltExtraInputs.currentReprocess" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-cyan-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1">Hedef Tamir Oranı (%)</label>
+                                <input type="number" v-model="saltExtraInputs.targetReprocess" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-cyan-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">1 Parti Tamir Maliyeti</label>
+                                <div class="relative">
+                                    <input type="number" v-model="saltExtraInputs.costPerReprocess" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-cyan-500">
+                                    <span class="absolute right-2 top-2 text-[10px] text-gray-400 font-bold">{{ currSymbol }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">Ort. Tuz Tüketimi</label>
+                                <div class="relative">
+                                    <input type="number" v-model="saltExtraInputs.saltPerBatch" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-cyan-500">
+                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">Kg/Parti</span>
+                                </div>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="block text-[10px] text-gray-500 font-semibold mb-1 truncate">Arıtma (Bertaraf) Maliyeti</label>
+                                <div class="relative">
+                                    <input type="number" step="0.1" v-model="saltExtraInputs.treatmentCostPerKg" class="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg pl-3 pr-10 py-2 text-sm font-bold text-gray-800 dark:text-white focus:ring-1 focus:ring-cyan-500">
+                                    <span class="absolute right-2 top-2 text-[9px] text-gray-400 font-bold">{{ currSymbol }}/Kg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div v-show="activeTab === 'report'" class="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
                 
                 <div class="text-center mb-2">
-                    <h2 class="text-2xl font-brand font-bold text-gray-800 dark:text-white">Örnek Saha Analizi</h2>
-                    <p class="text-xs text-brand-purple uppercase tracking-widest mt-1 font-bold">1 Aylık Gerçek İşletme Verisi (Demo)</p>
+                    <h2 class="text-2xl font-brand font-bold text-gray-800 dark:text-white">{{ t('reportTitle') }}</h2>
+                    <p class="text-xs text-brand-purple uppercase tracking-widest mt-1 font-bold">Örnek pH Kontrol Analizi (Son 30 Gün)</p>
                 </div>
 
                 <div class="flex bg-slate-800/80 rounded-xl p-1 mb-4 max-w-md mx-auto">
@@ -490,7 +663,6 @@
                         <i class="ri-information-line text-brand-primary align-middle mr-1"></i> <strong>Açıklama:</strong> İletkenlik (Inline) ölçümü banyo içi anlık yapıldığından, her bir işlem için okuma ve onay süresi maksimum 10 saniye olarak hesaplanmıştır.
                     </div>
                 </div>
-
             </div>
 
         </div>
@@ -500,17 +672,22 @@
                 <button @click="activeTab = 'home'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'home' ? 'text-gray-900 dark:text-white' : 'text-gray-400'">
                     <i class="ri-home-smile-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('home') }}</span>
                 </button>
-                <button @click="activeTab = 'salt'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'salt' ? 'text-brand-primary' : 'text-gray-400'">
-                    <i class="ri-flask-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_calc') }}</span>
+                
+                <button @click="activeTab = 'calculators'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="['salt', 'simulator', 'calculators'].includes(activeTab) ? 'text-indigo-500' : 'text-gray-400'">
+                    <i class="ri-calculator-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_calcs') }}</span>
                 </button>
-                <button @click="activeTab = 'simulator'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'simulator' ? 'text-brand-info' : 'text-gray-400'">
-                    <i class="ri-dashboard-3-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_sim') }}</span>
-                </button>
+                
                 <button @click="activeTab = 'ph_roi'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'ph_roi' ? 'text-brand-secondary' : 'text-gray-400'">
                     <i class="ri-line-chart-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_ph') }}</span>
                 </button>
+                <button @click="activeTab = 'ph_extra'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'ph_extra' ? 'text-teal-500' : 'text-gray-400'">
+                    <i class="ri-rocket-2-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_ph_ex') }}</span>
+                </button>
                 <button @click="activeTab = 'salt_roi'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'salt_roi' ? 'text-brand-primary' : 'text-gray-400'">
                     <i class="ri-bar-chart-box-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_salt') }}</span>
+                </button>
+                <button @click="activeTab = 'salt_extra'" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'salt_extra' ? 'text-cyan-500' : 'text-gray-400'">
+                    <i class="ri-shield-flash-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_salt_ex') }}</span>
                 </button>
                 <button @click="openReportTab" class="flex flex-1 min-w-[55px] flex-col items-center gap-1 transition-all" :class="activeTab === 'report' ? 'text-brand-purple' : 'text-gray-400'">
                     <i class="ri-file-chart-fill text-xl sm:text-2xl"></i><span class="text-[8px] font-bold whitespace-nowrap">{{ t('nav_report') }}</span>
@@ -519,9 +696,9 @@
             
             <div class="w-full bg-[#0a0f1c] text-gray-500 text-[9px] font-mono py-1.5 flex items-center overflow-hidden ticker-wrapper border-t border-gray-800 pb-safe">
                 <div class="ticker-text font-bold tracking-widest w-full">
-                    <span class="mr-12">⚠️ BU YAZILIMIN TÜM HAKLARI GİZLİDİR VE İZİNSİZ PAYLAŞILAMAZ © 2026 ERAY A. GENÇ ⚠️</span>
-                    <span class="mr-12">⚠️ STRICTLY CONFIDENTIAL & DO NOT DISTRIBUTE © 2026 ERAY A. GENÇ ⚠️</span>
-                    <span class="mr-12">⚠️ BU YAZILIMIN TÜM HAKLARI GİZLİDİR VE İZİNSİZ PAYLAŞILAMAZ © 2026 ERAY A. GENÇ ⚠️</span>
+                    <span class="mr-12">⚠️ BU YAZILIMIN TÜM HAKLARI GİZLİDİR VE İZİNSİZ PAYLAŞILAMAZ © 2026 ELiAR ELEKTRONİK ⚠️</span>
+                    <span class="mr-12">⚠️ STRICTLY CONFIDENTIAL & DO NOT DISTRIBUTE © 2026 ELiAR ELEKTRONİK ⚠️</span>
+                    <span class="mr-12">⚠️ BU YAZILIMIN TÜM HAKLARI GİZLİDİR VE İZİNSİZ PAYLAŞILAMAZ © 2026 ELiAR ELEKTRONİK ⚠️</span>
                 </div>
             </div>
         </div>
@@ -530,16 +707,18 @@
 </div>
 
 <script>
-    // ================= STATE & AYARLAR =================
     const translations = {
         tr: {
-            appTitle: "Eray Genç App", home: "Ana Ekran", settingsTab: "Ayarlar",
-            nav_calc: "Hesaplayıcı", nav_sim: "Tuz Knt", nav_ph: "pH Kazanç", nav_salt: "Tuz Kazanç", nav_report: "Örnek Rapor",
+            appTitle: "ELiAR App", home: "Ana Ekran", settingsTab: "Ayarlar",
+            calcCategoryTitle: "Hesap Araçları", calcCategoryDesc: "Birim dönüştürücü ve kontrol simülatörü.",
+            nav_calcs: "Hesaplar", nav_ph: "pH Kazanç", nav_ph_ex: "pH Ekstra", nav_salt: "Tuz Kazanç", nav_salt_ex: "Tuz Ekstra", nav_report: "Örnek Rapor",
             welcome: "Hoş Geldiniz", selectModule: "Lütfen kullanmak istediğiniz modülü seçin.",
             saltTitle: "İletkenlik Birim Hesaplayıcı", saltDesc: "İletkenlik, Konsantrasyon, Bome ve Sıvı Tuz Çevirici.",
             simTitle: "Tuz Kontrol Simülatörü", simDesc: "Hacim denge formülü ile gerçek g/L tespiti.",
             roiTitle: "pH Kazanç Simülatörü", roiDesc: "pH Sensörü için zaman, işçilik ve kapasite analizi.",
+            phExtraTitle: "pH Ek Kazanç Simülatörü", phExtraDesc: "Tamir düşüşü, buhar tasarrufu ve gizli kayıp analizi.",
             saltRoiTitle: "İletkenlik (Tuz) Kazanç Simülatörü", saltRoiDesc: "Otomatik tuz dozajı ve ölçümü için kazanç analizi.",
+            saltExtraTitle: "İletkenlik Ek Kazanç Simülatörü", saltExtraDesc: "Arıtma tasarrufu ve ileri seviye proses optimizasyonu.",
             reportTitle: "Gerçek Rapor Örneği", reportDesc: "Saha verilerine dayalı demo analiz ekranı.",
             settingsDesc: "İşletme ve maliyet verilerini tek merkezden yönetin.", settingsInfo: "Buraya girdiğiniz değerler tüm hesaplama modüllerinde ortak kullanılır.",
             clearAll: "Tümünü Sıfırla", liquidFactor: "Sıvı Tuz Çarpanı",
@@ -566,13 +745,16 @@
             u_pcs: "Adet", u_day: "Gün", u_min: "Dk", u_sec: "Sn", u_hour: "Saat"
         },
         en: {
-            appTitle: "Eray Genc App", home: "Home", settingsTab: "Settings",
-            nav_calc: "Calculator", nav_sim: "Salt Ctrl", nav_ph: "pH ROI", nav_salt: "Salt ROI", nav_report: "Demo Report",
+            appTitle: "ELiAR App", home: "Home", settingsTab: "Settings",
+            calcCategoryTitle: "Calculation Tools", calcCategoryDesc: "Unit converter and control simulator.",
+            nav_calcs: "Calculators", nav_ph: "pH ROI", nav_ph_ex: "pH Extra", nav_salt: "Salt ROI", nav_salt_ex: "Salt Extra", nav_report: "Demo Report",
             welcome: "Welcome", selectModule: "Please select a module to start.",
             saltTitle: "Conductivity Unit Calculator", saltDesc: "Conductivity, Concentration, Baume and Liquid Salt.",
             simTitle: "Salt Control Simulator", simDesc: "Real g/L detection via mass balance formula.",
             roiTitle: "pH Profit Simulator", roiDesc: "pH Sensor time, labor, energy analysis.",
+            phExtraTitle: "pH Extra Profit Simulator", phExtraDesc: "Reprocess reduction, steam savings and hidden loss analysis.",
             saltRoiTitle: "Conductivity (Salt) Profit Simulator", saltRoiDesc: "Automated salt dosing and measurement ROI.",
+            saltExtraTitle: "Conductivity Extra Profit Simulator", saltExtraDesc: "Treatment savings and advanced process optimization.",
             reportTitle: "Real Report Example", reportDesc: "Demo analysis screen based on field data.",
             settingsDesc: "Manage business and cost data from one center.", settingsInfo: "Values entered here are used globally in all modules.",
             clearAll: "Clear All", liquidFactor: "Liquid Salt Factor",
@@ -599,13 +781,16 @@
             u_pcs: "Pcs", u_day: "Day", u_min: "Min", u_sec: "Sec", u_hour: "Hour"
         },
         pt: {
-            appTitle: "Eray Genc App", home: "Início", settingsTab: "Config",
-            nav_calc: "Calculadora", nav_sim: "Ctrl Sal", nav_ph: "ROI pH", nav_salt: "ROI Sal", nav_report: "Relatório",
+            appTitle: "ELiAR App", home: "Início", settingsTab: "Config",
+            calcCategoryTitle: "Ferramentas de Cálculo", calcCategoryDesc: "Conversor de unidades e simulador.",
+            nav_calcs: "Cálculos", nav_ph: "ROI pH", nav_ph_ex: "pH Extra", nav_salt: "ROI Sal", nav_salt_ex: "Sal Extra", nav_report: "Relatório",
             welcome: "Bem-vindo", selectModule: "Selecione um módulo.",
             saltTitle: "Calculadora de Condutividade", saltDesc: "Condutividade, Concentração, Baumé e Sal Líquido.",
             simTitle: "Simulador Controle de Sal", simDesc: "Detecção real de g/L via fórmula de saldo.",
             roiTitle: "Simulador de Lucro pH", roiDesc: "Análise de tempo, trabalho, energia e capacidade.",
+            phExtraTitle: "Simulador Lucro Extra pH", phExtraDesc: "Redução de reprocesso e economia de vapor.",
             saltRoiTitle: "Simulador de Lucro Condutividade", saltRoiDesc: "ROI de medição e dosagem automática de sal.",
+            saltExtraTitle: "Simulador Lucro Extra Sal", saltExtraDesc: "Economia de tratamento e otimização avançada.",
             reportTitle: "Exemplo de Relatório", reportDesc: "Tela de análise baseada em dados reais.",
             settingsDesc: "Gerenciar dados de negócios e custos.", settingsInfo: "Valores usados globalmente.",
             clearAll: "Limpar Tudo", liquidFactor: "Fator Sal Líquido",
@@ -624,13 +809,16 @@
             u_pcs: "Unid", u_day: "Dia", u_min: "Min", u_sec: "Seg", u_hour: "Hora"
         },
         de: {
-            appTitle: "Eray Genc App", home: "Start", settingsTab: "Einst.",
-            nav_calc: "Rechner", nav_sim: "Salz Ctrl", nav_ph: "pH ROI", nav_salt: "Salz ROI", nav_report: "Bericht",
+            appTitle: "ELiAR App", home: "Start", settingsTab: "Einst.",
+            calcCategoryTitle: "Berechnungstools", calcCategoryDesc: "Einheitenumrechner und Simulator.",
+            nav_calcs: "Rechner", nav_ph: "pH ROI", nav_ph_ex: "pH Extra", nav_salt: "Salz ROI", nav_salt_ex: "Salz Extra", nav_report: "Bericht",
             welcome: "Willkommen", selectModule: "Bitte wählen Sie ein Modul.",
             saltTitle: "Leitfähigkeitsrechner", saltDesc: "Leitfähigkeit, Konzentration, Baumé und Flüssigsalz.",
             simTitle: "Salzkontrollsimulator", simDesc: "Echte g/L Erkennung über Massenbilanz.",
             roiTitle: "pH Gewinn Simulator", roiDesc: "Zeit-, Arbeits-, Energie- und Kapazitätsanalyse.",
+            phExtraTitle: "pH Extra Gewinn Simulator", phExtraDesc: "Reprozessreduzierung und Dampfeinsparung.",
             saltRoiTitle: "Leitfähigkeit (Salz) Gewinn Simulator", saltRoiDesc: "ROI für automatische Salzdosierung.",
+            saltExtraTitle: "Salz Extra Gewinn Simulator", saltExtraDesc: "Behandlungseinsparungen und erweiterte Optimierung.",
             reportTitle: "Reales Berichtsmuster", reportDesc: "Demo-Analyse-Bildschirm basierend auf Felddaten.",
             settingsDesc: "Betriebs- und Kostendaten zentral verwalten.", settingsInfo: "Werte werden global verwendet.",
             clearAll: "Alles löschen", liquidFactor: "Flüssigsalz-Faktor",
@@ -654,7 +842,6 @@
 
     createApp({
         setup() {
-            // VARSAYILAN DARK MODE: true
             const isDark = ref(true); 
             const activeTab = ref('home');
             const isSettingsOpen = ref(false); 
@@ -698,10 +885,17 @@
 
             const changeCurrency = () => {
                 const multiplier = (exchangeRates[prevCurrency.value] || 1) / (exchangeRates[currency.value] || 1);
+                
                 globalInputs.opSalary = parseFloat((globalInputs.opSalary * multiplier).toFixed(2));
                 globalInputs.electricPrice = parseFloat((globalInputs.electricPrice * multiplier).toFixed(4));
                 globalInputs.steamPrice = parseFloat((globalInputs.steamPrice * multiplier).toFixed(2));
                 globalInputs.fabricPrice = parseFloat((globalInputs.fabricPrice * multiplier).toFixed(2));
+                
+                phExtraInputs.costPerReprocess = parseFloat((phExtraInputs.costPerReprocess * multiplier).toFixed(2));
+                
+                saltExtraInputs.costPerReprocess = parseFloat((saltExtraInputs.costPerReprocess * multiplier).toFixed(2));
+                saltExtraInputs.treatmentCostPerKg = parseFloat((saltExtraInputs.treatmentCostPerKg * multiplier).toFixed(2));
+
                 prevCurrency.value = currency.value;
             };
 
@@ -719,6 +913,15 @@
             const formatNumber = (num, decimals = 2) => {
                 if(!num || isNaN(num)) return "0.00";
                 return Number(num).toLocaleString('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+            };
+
+            // ================= NAVİGASYON (GERİ BUTONU) =================
+            const goBack = () => {
+                if (activeTab.value === 'salt' || activeTab.value === 'simulator') {
+                    activeTab.value = 'calculators'; 
+                } else {
+                    activeTab.value = 'home'; 
+                }
             };
 
             // ================= AYARLAR =================
@@ -849,56 +1052,78 @@
             const saltLocalInputs = reactive({ measPerBatch: 3, manTimeMin: 5, senTimeSec: 30, successRate: 100 });
             const saltRoiResults = computed(() => calcRoi(saltLocalInputs)[saltRoiPeriod.value]);
 
-            // ================= ÖRNEK RAPOR MODÜLÜ (CHART.JS) =================
+            // ================= pH EK KAZANÇ MODÜLÜ =================
+            const phExtraPeriod = ref('monthly');
+            const phExtraInputs = reactive({ currentReprocess: 8, targetReprocess: 3, costPerReprocess: 150, steamWaste: 0.3 });
+            
+            const phExtraResults = computed(() => {
+                const g = globalInputs;
+                const l = phLocalInputs;
+                const ex = phExtraInputs;
+                
+                let multiplier = 1;
+                if (phExtraPeriod.value === 'monthly') multiplier = g.days;
+                if (phExtraPeriod.value === 'yearly') multiplier = g.days * 12;
+                
+                const totalBatches = g.machines * g.batches * multiplier;
+                const preventedBatches = totalBatches * ((ex.currentReprocess - ex.targetReprocess) / 100);
+                const reprocessSavings = preventedBatches * ex.costPerReprocess;
+
+                const measTotal = totalBatches * l.measPerBatch;
+                const totalWaitHours = (measTotal * l.manTimeMin) / 60;
+                const steamSavings = totalWaitHours * ex.steamWaste * g.steamPrice;
+
+                return { preventedBatches, reprocessSavings, totalWaitHours, steamSavings, totalExtraSavings: reprocessSavings + steamSavings };
+            });
+
+            // ================= İLETKENLİK EK KAZANÇ MODÜLÜ =================
+            const saltExtraPeriod = ref('monthly');
+            const saltExtraInputs = reactive({ currentReprocess: 8, targetReprocess: 3, costPerReprocess: 150, saltPerBatch: 450, treatmentCostPerKg: 0.8 });
+            
+            const saltExtraResults = computed(() => {
+                const g = globalInputs;
+                const ex = saltExtraInputs;
+                
+                let multiplier = 1;
+                if (saltExtraPeriod.value === 'monthly') multiplier = g.days;
+                if (saltExtraPeriod.value === 'yearly') multiplier = g.days * 12;
+                
+                const totalBatches = g.machines * g.batches * multiplier;
+                
+                const preventedBatches = totalBatches * ((ex.currentReprocess - ex.targetReprocess) / 100);
+                const reprocessSavings = preventedBatches * ex.costPerReprocess;
+
+                const preventedSaltKg = preventedBatches * ex.saltPerBatch;
+                const treatmentSavings = preventedSaltKg * ex.treatmentCostPerKg;
+
+                return { preventedBatches, reprocessSavings, preventedSaltKg, treatmentSavings, totalExtraSavings: reprocessSavings + treatmentSavings };
+            });
+
+            // ================= ÖRNEK RAPOR MODÜLÜ =================
             const reportTab = ref('ph');
             let phPieChartInstance = null;
             let phBarChartInstance = null;
             let condPieChartInstance = null;
 
             const renderCharts = () => {
-                // PH PIE CHART
                 const ctxPhPie = document.getElementById('phPieChart');
                 if(ctxPhPie && !phPieChartInstance) {
                     phPieChartInstance = new Chart(ctxPhPie, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Manuel (9s 19dk)', 'Kazanılan (6s 21dk)'],
-                            datasets: [{
-                                data: [100], backgroundColor: ['#ef4444'], borderWidth: 0, weight: 1
-                            }, {
-                                data: [68, 32], backgroundColor: ['#22c55e', 'transparent'], borderWidth: 0, weight: 0.7
-                            }]
-                        },
+                        type: 'doughnut', data: { labels: ['Manuel (9s 19dk)', 'Kazanılan (6s 21dk)'], datasets: [{ data: [100], backgroundColor: ['#ef4444'], borderWidth: 0, weight: 1 }, { data: [68, 32], backgroundColor: ['#22c55e', 'transparent'], borderWidth: 0, weight: 0.7 }] },
                         options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
                     });
                 }
-
-                // PH BAR CHART
                 const ctxPhBar = document.getElementById('phBarChart');
                 if(ctxPhBar && !phBarChartInstance) {
                     phBarChartInstance = new Chart(ctxPhBar, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Kayıt 1', 'Kayıt 2', 'Kayıt 3', 'Kayıt 4', 'Kayıt 5'],
-                            datasets: [{ label: 'Bekleme (Dk)', data: [66, 40, 35, 34, 29], backgroundColor: '#8b5cf6', borderRadius: 4 }]
-                        },
+                        type: 'bar', data: { labels: ['Kayıt 1', 'Kayıt 2', 'Kayıt 3', 'Kayıt 4', 'Kayıt 5'], datasets: [{ label: 'Bekleme (Dk)', data: [66, 40, 35, 34, 29], backgroundColor: '#8b5cf6', borderRadius: 4 }] },
                         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } } }
                     });
                 }
-
-                // COND PIE CHART
                 const ctxCondPie = document.getElementById('condPieChart');
                 if(ctxCondPie && !condPieChartInstance) {
                     condPieChartInstance = new Chart(ctxCondPie, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Manuel (4s 18dk)', 'Kazanılan (4s 11dk)'],
-                            datasets: [{
-                                data: [100], backgroundColor: ['#ef4444'], borderWidth: 0, weight: 1
-                            }, {
-                                data: [97, 3], backgroundColor: ['#3b82f6', 'transparent'], borderWidth: 0, weight: 0.7
-                            }]
-                        },
+                        type: 'doughnut', data: { labels: ['Manuel (4s 18dk)', 'Kazanılan (4s 11dk)'], datasets: [{ data: [100], backgroundColor: ['#ef4444'], borderWidth: 0, weight: 1 }, { data: [97, 3], backgroundColor: ['#3b82f6', 'transparent'], borderWidth: 0, weight: 0.7 }] },
                         options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
                     });
                 }
@@ -906,11 +1131,9 @@
 
             const openReportTab = () => {
                 activeTab.value = 'report';
-                // DOM'un render edilmesini bekleyip grafikleri çiz
                 nextTick(() => { renderCharts(); });
             };
 
-            // THEME
             const toggleTheme = () => {
                 isDark.value = !isDark.value;
                 if(isDark.value) document.documentElement.classList.add('dark');
@@ -931,10 +1154,13 @@
 
             return {
                 isDark, toggleTheme, activeTab, isSettingsOpen, pageTitle, lang, t, getUnit, currency, changeCurrency, currSymbol, exchangeRates, ratesLoaded,
+                goBack,
                 liquidFactor, updateFactor, saltValues, getSaltIcon, getSaltUnit, saltActive, calcSalt, resetSalt,
                 globalInputs, simInputs, simResults, 
                 phLocalInputs, phPeriod, phResults,
+                phExtraInputs, phExtraPeriod, phExtraResults,
                 saltLocalInputs, saltRoiPeriod, saltRoiResults,
+                saltExtraInputs, saltExtraPeriod, saltExtraResults,
                 reportTab, openReportTab,
                 formatNumber, formatTime
             };
