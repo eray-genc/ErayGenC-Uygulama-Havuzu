@@ -1534,15 +1534,15 @@
             };
 
             const phPeriod = ref('monthly');
-            const phLocalInputs = reactive({ measPerBatch: 6, manTimeMin: 4, senTimeSec: 40, successRate: 100 });
+            const phLocalInputs = reactive({ measPerBatch: 2, manTimeMin: 5, senTimeSec: 40, successRate: 50 });
             const phResults = computed(() => calcRoi(phLocalInputs)[phPeriod.value]);
 
             const saltRoiPeriod = ref('monthly');
-            const saltLocalInputs = reactive({ measPerBatch: 3, manTimeMin: 5, senTimeSec: 30, successRate: 100 });
+            const saltLocalInputs = reactive({ measPerBatch: 1, manTimeMin: 5, senTimeSec: 10, successRate: 50 });
             const saltRoiResults = computed(() => calcRoi(saltLocalInputs)[saltRoiPeriod.value]);
 
             const phExtraPeriod = ref('monthly');
-            const phExtraInputs = reactive({ currentReprocess: 8, targetReprocess: 3, costPerReprocess: 150, steamWaste: 0.3 });
+            const phExtraInputs = reactive({ currentReprocess: 5, targetReprocess: 4, costPerReprocess: 150, steamWaste: 0.3 });
             
             const phExtraResults = computed(() => {
                 const g = globalInputs;
@@ -1565,7 +1565,7 @@
             });
 
             const saltExtraPeriod = ref('monthly');
-            const saltExtraInputs = reactive({ currentReprocess: 8, targetReprocess: 3, costPerReprocess: 150, saltPerBatch: 450, treatmentCostPerKg: 0.8 });
+            const saltExtraInputs = reactive({ currentReprocess: 5, targetReprocess: 4, costPerReprocess: 150, saltPerBatch: 450, treatmentCostPerKg: 0.8 });
             
             const saltExtraResults = computed(() => {
                 const g = globalInputs;
